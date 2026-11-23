@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
   <meta name="theme-color" content="#1B3B2B" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="description" content="Leyla'ya özel 24 Kasım zaman kapsülü — Abdullah" />
@@ -385,6 +385,124 @@
       60% { transform: scale(1); }
     }
 
+    /* ---------- Final kalp (Leyla) ---------- */
+    .heart-panel {
+      transition: transform 1.1s var(--ease-out), box-shadow 1.1s ease;
+    }
+    .heart-panel.is-blooming {
+      transform: scale(1.02);
+      box-shadow:
+        0 0 0 1px rgba(197, 160, 89, 0.35),
+        0 28px 60px -24px rgba(27, 59, 43, 0.45),
+        0 0 80px -20px rgba(197, 160, 89, 0.35);
+    }
+    .heart-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1.12;
+      height: auto;
+      min-height: 280px;
+      max-height: min(78vw, 440px);
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      background:
+        radial-gradient(ellipse at 50% 42%, rgba(197, 160, 89, 0.18), transparent 52%),
+        radial-gradient(ellipse at 50% 100%, rgba(27, 59, 43, 0.55), transparent 60%),
+        linear-gradient(165deg, #0C1812 0%, #14281E 40%, #1B3B2B 72%, #0F1F17 100%);
+      box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4);
+      transition: box-shadow 1s ease, filter 1s ease;
+    }
+    .heart-stage.is-alive {
+      box-shadow:
+        inset 0 0 60px rgba(0, 0, 0, 0.35),
+        0 0 40px -8px rgba(197, 160, 89, 0.35);
+    }
+    .heart-stage canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+    }
+    .heart-stage-veil {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      background: radial-gradient(circle at 50% 45%, rgba(27, 59, 43, 0.28), rgba(12, 24, 18, 0.78));
+      transition: opacity 0.85s var(--ease-out), visibility 0.85s var(--ease-out);
+    }
+    .heart-stage.is-alive .heart-stage-veil {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .heart-caption {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s var(--ease-out) 0.35s, transform 0.8s var(--ease-out) 0.35s;
+    }
+    .heart-panel.is-alive .heart-caption {
+      opacity: 1;
+      transform: none;
+    }
+    .heart-stage.is-alive {
+      cursor: pointer;
+    }
+    #heart-hint {
+      min-height: 1.1rem;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .heart-stage-static {
+        display: flex !important;
+      }
+      .heart-stage canvas {
+        display: none;
+      }
+    }
+    .heart-stage-static {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      align-items: center;
+      justify-content: center;
+    }
+    .heart-stage-static svg {
+      width: 48%;
+      max-width: 180px;
+      filter: drop-shadow(0 0 24px rgba(197, 160, 89, 0.45));
+      animation: heartBeat 2.8s ease-in-out infinite;
+    }
+    @media (max-width: 480px) {
+      .heart-stage {
+        min-height: 260px;
+        max-height: min(88vw, 380px);
+        border-radius: 14px;
+      }
+      .heart-stage-veil {
+        padding: 1rem;
+        gap: 0.65rem;
+      }
+      .heart-panel {
+        padding-left: 0.85rem !important;
+        padding-right: 0.85rem !important;
+      }
+      #awaken-heart {
+        min-height: 44px;
+        min-width: 140px;
+      }
+    }
+
     .play-pulse {
       animation: playPulse 2.2s ease-out infinite;
     }
@@ -393,7 +511,7 @@
       50% { box-shadow: 0 0 0 14px rgba(197,160,89,0); }
     }
 
-    #confetti-canvas, #dust-canvas {
+    #confetti-canvas, #dust-canvas, #heart-bloom-canvas {
       position: fixed;
       inset: 0;
       width: 100%;
@@ -401,6 +519,7 @@
       pointer-events: none;
     }
     #dust-canvas { z-index: 45; }
+    #heart-bloom-canvas { z-index: 70; }
     #confetti-canvas { z-index: 90; }
 
     .flash-veil {
@@ -418,6 +537,115 @@
       0% { opacity: 0; }
       30% { opacity: 1; }
       100% { opacity: 0; }
+    }
+
+    /* ---------- Final: Seni çok seviyorum ---------- */
+    .love-finale {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: max(1.5rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) max(1.5rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(197,160,89,0.22), transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(27,59,43,0.95), #0C1812 70%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.9s var(--ease-out), visibility 0.9s var(--ease-out);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .love-finale.is-on {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .love-finale-inner {
+      position: relative;
+      text-align: center;
+      max-width: min(34rem, 100%);
+      transform: scale(0.72) translateY(18px);
+      filter: blur(8px);
+      opacity: 0;
+      transition:
+        transform 1.15s var(--ease-out) 0.15s,
+        filter 1.15s var(--ease-out) 0.15s,
+        opacity 1s var(--ease-out) 0.15s;
+    }
+    .love-finale.is-on .love-finale-inner {
+      transform: scale(1) translateY(0);
+      filter: blur(0);
+      opacity: 1;
+    }
+    .love-finale-kicker {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.05rem, 4.2vw, 1.45rem);
+      font-weight: 500;
+      font-style: italic;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      color: #E8D5A3;
+      margin-bottom: 1.35rem;
+      line-height: 1.55;
+      text-shadow: 0 0 28px rgba(197,160,89,0.4);
+    }
+    .love-finale-kicker span {
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .love-finale-kicker .dot {
+      display: inline-block;
+      margin: 0 0.35em;
+      opacity: 0.55;
+      font-style: normal;
+    }
+    .love-finale-line {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2rem, 8.5vw, 3.15rem);
+      line-height: 1.22;
+      color: #FBF9F5;
+      text-shadow: 0 0 48px rgba(197,160,89,0.45);
+    }
+    .love-finale-line em {
+      font-style: italic;
+      color: #E8D5A3;
+    }
+    .love-finale-sub {
+      margin-top: 1.15rem;
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      color: rgba(251,249,245,0.55);
+    }
+    .love-finale-hint {
+      margin-top: 2rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(197,160,89,0.55);
+      opacity: 0;
+      transition: opacity 0.8s ease 1.4s;
+    }
+    .love-finale.is-on .love-finale-hint {
+      opacity: 1;
+    }
+    .love-finale-burst {
+      position: absolute;
+      inset: -20%;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(197,160,89,0.35), transparent 42%);
+      opacity: 0;
+      transform: scale(0.4);
+    }
+    .love-finale.is-on .love-finale-burst {
+      animation: loveBurst 1.4s var(--ease-out) forwards;
+    }
+    @keyframes loveBurst {
+      0% { opacity: 0; transform: scale(0.35); }
+      35% { opacity: 1; transform: scale(1.05); }
+      100% { opacity: 0.35; transform: scale(1.35); }
     }
 
     ::-webkit-scrollbar { width: 8px; }
@@ -452,20 +680,19 @@
       position: absolute;
       inset: 0;
       border-radius: 50%;
-      background:
-        conic-gradient(from 0deg, #8B6914, #D4B87A, #C5A059, #6B4A2E, #D4B87A, #9A7A3C, #E8D5A3, #8B6914);
-      padding: 7px;
+      background: linear-gradient(145deg, #243f32, #1B3B2B 45%, #12261C);
+      padding: 5px;
       box-shadow:
-        0 0 0 1px rgba(44, 36, 30, 0.25),
-        inset 0 1px 0 rgba(255,255,255,0.35);
+        0 0 0 1px rgba(197, 160, 89, 0.28),
+        inset 0 1px 0 rgba(255,255,255,0.08);
     }
     .compass-mid {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: linear-gradient(160deg, #1F4332, #14281E 55%, #0F1F17);
-      padding: 8px;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.35);
+      background: linear-gradient(165deg, #1F4332, #14281E 60%, #0F1F17);
+      padding: 6px;
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.28);
     }
     .compass-face {
       position: relative;
@@ -474,17 +701,18 @@
       border-radius: 50%;
       overflow: visible;
       background:
-        radial-gradient(circle at 32% 28%, #FFFDF9 0%, #F7F1E6 42%, #E8DFD0 78%, #D9CDB8 100%);
+        radial-gradient(circle at 50% 42%, rgba(197,160,89,0.10), transparent 55%),
+        radial-gradient(circle at 30% 25%, #1F4332, #14281E 55%, #0C1812 100%);
       box-shadow:
-        inset 0 0 0 1px rgba(197,160,89,0.35),
-        inset 0 0 28px rgba(154,122,60,0.12);
+        inset 0 0 0 1px rgba(197,160,89,0.22),
+        inset 0 0 36px rgba(0,0,0,0.35);
     }
     .compass-face::before {
       content: '';
       position: absolute;
-      inset: 12%;
+      inset: 14%;
       border-radius: 50%;
-      border: 1px dashed rgba(197,160,89,0.35);
+      border: 1px solid rgba(197,160,89,0.16);
       pointer-events: none;
     }
     .compass-face::after {
@@ -493,8 +721,8 @@
       inset: 0;
       border-radius: 50%;
       background:
-        repeating-conic-gradient(from 0deg, rgba(197,160,89,0.14) 0deg 1.2deg, transparent 1.2deg 30deg);
-      opacity: 0.55;
+        repeating-conic-gradient(from 0deg, rgba(197,160,89,0.10) 0deg 1deg, transparent 1deg 45deg);
+      opacity: 0.4;
       pointer-events: none;
     }
 
@@ -521,13 +749,13 @@
       display: inline-flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
-      padding: 7px 9px;
-      border-radius: 16px;
-      background: rgba(251,249,245,0.72);
-      border: 1px solid rgba(197,160,89,0.22);
-      backdrop-filter: blur(4px);
-      box-shadow: 0 6px 16px -12px rgba(44,36,30,0.4);
+      gap: 2px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(15, 31, 23, 0.55);
+      border: 1px solid rgba(197,160,89,0.18);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 6px 16px -12px rgba(0,0,0,0.45);
       transform: scale(0.7);
       opacity: 0.45;
       transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -536,42 +764,49 @@
       z-index: 7;
     }
     .compass-place.is-front .compass-place-inner {
-      background: linear-gradient(160deg, #FFFDF8, #F3E6C8);
-      border-color: rgba(197,160,89,0.85);
+      background: rgba(251, 249, 245, 0.94);
+      border-color: rgba(197,160,89,0.55);
       box-shadow:
-        0 14px 30px -12px rgba(154,122,60,0.55),
-        0 0 0 3px rgba(197,160,89,0.15);
+        0 12px 28px -14px rgba(0,0,0,0.45),
+        0 0 0 3px rgba(197,160,89,0.12);
     }
     .compass-place-dot {
-      width: 5px;
-      height: 5px;
+      width: 4px;
+      height: 4px;
       border-radius: 50%;
       background: #C5A059;
-      box-shadow: 0 0 0 2px rgba(197,160,89,0.2);
+      box-shadow: 0 0 0 2px rgba(197,160,89,0.18);
     }
     .compass-place.is-front .compass-place-dot {
       background: #1B3B2B;
-      box-shadow: 0 0 0 3px rgba(27,59,43,0.15);
+      box-shadow: 0 0 0 3px rgba(27,59,43,0.12);
     }
     .compass-place-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 11px;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-size: 10px;
       font-weight: 600;
       line-height: 1.15;
-      color: #2C241E;
+      color: rgba(251,249,245,0.88);
+      letter-spacing: 0.01em;
+    }
+    .compass-place.is-front .compass-place-title {
+      color: #1B3B2B;
     }
     .compass-place-sub {
-      font-size: 7.5px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-weight: 600;
-      color: rgba(92,82,72,0.7);
+      font-size: 8px;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+      color: rgba(212,184,122,0.75);
+      text-transform: none;
+    }
+    .compass-place.is-front .compass-place-sub {
+      color: rgba(92,82,72,0.75);
     }
 
     .compass-biz {
       position: absolute;
       left: 50%;
-      top: 10px;
+      top: 12px;
       transform: translateX(-50%);
       z-index: 8;
       display: flex;
@@ -581,27 +816,17 @@
       pointer-events: none;
     }
     .compass-biz-heart {
-      width: 34px;
-      height: 34px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at 35% 30%, #E8D5A3, #C5A059 48%, #8B6914);
+      background: rgba(197,160,89,0.92);
       box-shadow:
-        0 8px 18px -6px rgba(154,122,60,0.7),
-        0 0 0 3px rgba(251,249,245,0.95),
-        0 0 0 5px rgba(197,160,89,0.35);
+        0 6px 16px -6px rgba(154,122,60,0.55),
+        0 0 0 3px rgba(20,40,30,0.55);
       animation: sealBreathe 3.2s ease-in-out infinite;
-    }
-    .compass-biz-text {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      color: #1B3B2B;
-      text-transform: uppercase;
-      text-shadow: 0 1px 0 rgba(255,253,248,0.8);
     }
 
     .compass-needle {
@@ -637,13 +862,12 @@
     }
 
     .compass-front-card {
-      margin-top: 1.35rem;
+      margin-top: 1.2rem;
       text-align: center;
-      min-height: 5rem;
-      padding: 0.85rem 0.75rem;
-      border-radius: 16px;
-      background: linear-gradient(180deg, rgba(255,253,248,0.9), rgba(243,238,228,0.65));
-      border: 1px solid rgba(197,160,89,0.28);
+      min-height: 4.5rem;
+      padding: 0.35rem 0.5rem;
+      background: transparent;
+      border: none;
       transition: opacity 0.3s ease, transform 0.35s var(--ease-out);
     }
     .compass-front-card.is-swap {
@@ -651,24 +875,24 @@
       transform: translateY(8px) scale(0.98);
     }
     .compass-front-kicker {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: none;
       color: #9A7A3C;
     }
     .compass-front-title {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       color: #1B3B2B;
-      margin-top: 0.3rem;
+      margin-top: 0.2rem;
     }
     .compass-front-story {
-      margin-top: 0.4rem;
+      margin-top: 0.35rem;
       font-size: 0.8125rem;
       line-height: 1.55;
       color: #5C5248;
-      max-width: 28ch;
+      max-width: 30ch;
       margin-left: auto;
       margin-right: auto;
     }
@@ -689,13 +913,60 @@
         filter: none !important;
       }
     }
+
+    /* ---------- Mobil / güvenli alan ---------- */
+    @media (max-width: 640px) {
+      .main-content {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+        padding-bottom: max(4.5rem, calc(env(safe-area-inset-bottom) + 3.5rem));
+      }
+      .gate {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+        padding-top: max(1.5rem, env(safe-area-inset-top));
+        padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+      }
+      .music-toggle {
+        bottom: max(1.1rem, env(safe-area-inset-bottom));
+        right: max(1.1rem, env(safe-area-inset-right));
+      }
+      .cinema-frame {
+        border-radius: 14px;
+        padding: 8px;
+      }
+      #open-capsule,
+      #attendance-btn,
+      #compass-calibrate,
+      #unlock-form button,
+      #awaken-heart {
+        min-height: 44px;
+      }
+      .compass-stage {
+        width: min(100%, 250px);
+      }
+    }
   </style>
 </head>
 <body class="paper-bg grain antialiased">
 
   <canvas id="dust-canvas" aria-hidden="true"></canvas>
+  <canvas id="heart-bloom-canvas" aria-hidden="true"></canvas>
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
   <div id="flash-veil" class="flash-veil" aria-hidden="true"></div>
+
+  <!-- Final aşk patlaması -->
+  <div id="love-finale" class="love-finale" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="love-finale-line">
+    <div class="love-finale-burst" aria-hidden="true"></div>
+    <div class="love-finale-inner">
+      <p class="love-finale-kicker">
+        <span>tombiğim</span><span class="dot">·</span><span>güzeller güzelim</span><span class="dot">·</span><span>rıhemîn</span>
+      </p>
+      <h2 id="love-finale-line" class="love-finale-line">Seni çok<br /><em>seviyorum</em></h2>
+      <p class="love-finale-sub">— Abdullah · 24 Kasım 2026</p>
+      <p class="love-finale-hint">Dokunarak kapat</p>
+    </div>
+  </div>
 
   <!-- ===================== GİRİŞ KAPISI ===================== -->
   <div id="gate" class="gate fixed inset-0 z-50 flex items-center justify-center px-5 py-10">
@@ -742,10 +1013,8 @@
       </div>
 
       <!--
-        AMBIENT MÜZİK (Mixkit ücretsiz lisans):
-        Seçilen: "Romantic" — Francisco Alvear (Mixkit)
-        Karşılaştırma için: ambient-harp.mp3 = Wedding Harp yedeği
-        Kendi şarkın: ambient.mp3 dosyasını değiştirmen yeterli.
+        AMBIENT MÜZİK (Mixkit Free License):
+        "Wedding Harp" — Francisco Alvear (~2:21, harp / romantik)
       -->
       <audio id="ambient-audio" src="ambient.mp3" preload="auto"></audio>
     </div>
@@ -890,14 +1159,9 @@
         </div>
       </div>
 
-      <div class="reveal-child gold-frame corner-ornament relative mt-5 overflow-hidden rounded-2xl bg-cream px-5 py-8 sm:px-7">
+      <div class="reveal-child relative mt-5 overflow-hidden rounded-2xl border border-brass/25 bg-cream/80 px-4 py-7 sm:px-6 sm:py-8">
         <div class="orb absolute -right-10 -top-10 h-32 w-32 rounded-full bg-brass/10 blur-2xl"></div>
         <div class="orb delay absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-chalk/10 blur-2xl"></div>
-
-        <div class="relative mb-5 text-center">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.26em] text-brassDeep">Yönün hep biziz</p>
-          <div class="gold-line mx-auto mt-3 w-16 is-drawn"></div>
-        </div>
 
         <div class="compass-wrap relative">
           <div class="compass-stage" id="compass-stage" aria-label="Aşk pusulası">
@@ -910,7 +1174,6 @@
                     <div class="compass-biz-heart">
                       <i data-lucide="heart" class="h-3.5 w-3.5 text-chalk"></i>
                     </div>
-                    <span class="compass-biz-text">Biz</span>
                   </div>
 
                   <div class="compass-needle" id="compass-needle">
@@ -938,21 +1201,21 @@
         </div>
 
         <div id="compass-front-card" class="compass-front-card relative">
-          <p class="compass-front-kicker" id="compass-front-kicker">Şu an önde</p>
+          <p class="compass-front-kicker" id="compass-front-kicker">Şimdi</p>
           <p class="compass-front-title" id="compass-front-title">İlk Merhaba</p>
           <p class="compass-front-story" id="compass-front-story">Eğitim Fakültesi kantininde başlayan bakış — her şeyin ilk adımı.</p>
         </div>
 
-        <p id="compass-caption" class="compass-caption relative mt-4 text-center font-display text-sm italic text-ink/85">
-          “Anı değişir — yön değişmez.”
+        <p id="compass-caption" class="compass-caption relative mt-4 text-center text-sm text-inkMuted">
+          Nereye dönersen dön — yine biz.
         </p>
 
         <div class="relative mt-5 flex flex-col items-center gap-2">
           <button id="compass-calibrate" type="button" class="btn-brass inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold">
-            <i data-lucide="compass" class="h-3.5 w-3.5"></i>
-            Pusulayı Kalibre Et
+            <i data-lucide="refresh-cw" class="h-3.5 w-3.5"></i>
+            Anıları çevir
           </button>
-          <p class="text-[10px] tracking-wide text-inkMuted/80">Sürükle veya çevir — öne gelen anı büyür</p>
+          <p class="text-[10px] tracking-wide text-inkMuted/80">Sürükle — öne gelen anı büyür</p>
         </div>
       </div>
     </section>
@@ -962,9 +1225,9 @@
       <div class="mb-4 flex items-start gap-3">
         <span class="badge-pop mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-chalk text-[11px] font-bold text-parchment">04</span>
         <div class="reveal-child">
-          <h3 class="font-display text-xl text-ink sm:text-[1.35rem]">Gelecekteki Sınıfına Not</h3>
+          <h3 class="font-display text-xl text-ink sm:text-[1.35rem]">Sana Yazılan Mektup</h3>
           <p class="mt-2 text-sm leading-relaxed text-inkMuted">
-            Bu bölüm, bizim başlangıcımızın anahtarıyla açılmak üzere mühürlendi.
+            Bu mektup, bizim başlangıcımızın anahtarıyla açılmak üzere mühürlendi.
           </p>
         </div>
       </div>
@@ -1011,7 +1274,7 @@
         <article class="gold-frame unlock-burst relative rounded-2xl bg-cream px-5 py-7 sm:px-8 sm:py-8">
           <div class="mb-5 flex items-center gap-2 text-brassDeep">
             <i data-lucide="mail-open" class="h-4 w-4"></i>
-            <span class="text-[11px] font-semibold uppercase tracking-[0.2em]">Gelecekteki Leyla Öğretmen’e</span>
+            <span class="text-[11px] font-semibold uppercase tracking-[0.2em]">Leyla’ya</span>
           </div>
           <div class="gold-line w-full-draw mb-5 is-drawn"></div>
 
@@ -1075,6 +1338,64 @@ Abdullah
       </div>
     </section>
 
+    <!-- BÖLÜM 5: KALP -->
+    <section id="heart-gift" class="mb-14 reveal">
+      <div class="mb-4 flex items-start gap-3">
+        <span class="badge-pop mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-chalk text-[11px] font-bold text-parchment">05</span>
+        <div class="reveal-child">
+          <h3 class="font-display text-xl text-ink sm:text-[1.35rem]">Sana Emanet Kalbim</h3>
+          <p class="mt-2 text-sm leading-relaxed text-inkMuted">
+            Her dokunuşta bir kalp daha gelir; yukarıdan aşağı çizilir, yavaşça döner — sen tamamlayana kadar.
+          </p>
+        </div>
+      </div>
+
+      <div class="heart-panel reveal-child gold-frame corner-ornament relative mt-5 overflow-hidden rounded-2xl bg-cream px-4 py-6 sm:px-6 sm:py-7">
+        <div class="orb absolute -right-10 -top-10 h-32 w-32 rounded-full bg-brass/10 blur-2xl"></div>
+        <div class="orb delay absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-chalk/10 blur-2xl"></div>
+
+        <div id="heart-stage" class="heart-stage relative" aria-label="Animasyonlu kalp">
+          <canvas id="heart-canvas" aria-hidden="true"></canvas>
+          <div class="heart-stage-static" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <defs>
+                <linearGradient id="heartStaticGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#D4B87A"/>
+                  <stop offset="55%" stop-color="#C5A059"/>
+                  <stop offset="100%" stop-color="#9A7A3C"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#heartStaticGrad)" d="M12 21s-6.7-4.35-9.33-7.4C.5 10.9 1.1 7.2 3.9 5.6c2-1.15 4.45-.55 5.85 1.2L12 9.2l2.25-2.4c1.4-1.75 3.85-2.35 5.85-1.2 2.8 1.6 3.4 5.3 1.23 7.99C18.7 16.65 12 21 12 21z"/>
+            </svg>
+          </div>
+          <div id="heart-veil" class="heart-stage-veil">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full seal seal-breathe">
+              <i data-lucide="heart" class="h-6 w-6 text-chalk"></i>
+            </div>
+            <p class="font-display text-base text-parchment/95 sm:text-lg">Kalbi çiz</p>
+            <p class="max-w-[240px] text-center text-[11px] leading-relaxed text-parchment/60">
+              Her dokunuşta bir kalp daha gelir — yukarıdan aşağı tamamlanır.
+            </p>
+            <button
+              id="awaken-heart"
+              type="button"
+              class="btn-brass mt-1 inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold"
+            >
+              <i data-lucide="sparkles" class="h-3.5 w-3.5"></i>
+              İlk kalbi getir
+            </button>
+          </div>
+        </div>
+
+        <p id="heart-hint" class="heart-caption relative mt-4 text-center text-[11px] tracking-wide text-inkMuted">
+          Dokunmaya devam et
+        </p>
+        <p class="heart-caption relative mt-2 text-center font-display text-sm italic leading-relaxed text-ink/85">
+          “Yönüm hep sana ait.”
+        </p>
+      </div>
+    </section>
+
     <footer class="reveal border-t border-brass/20 pt-8 text-center">
       <i data-lucide="heart" class="heart-beat mx-auto h-4 w-4 text-brass"></i>
       <p class="reveal-child font-display mt-3 text-sm leading-relaxed text-ink sm:text-[15px]">
@@ -1103,11 +1424,10 @@ Abdullah
 
     const ambientAudio = document.getElementById('ambient-audio');
     const musicToggle = document.getElementById('music-toggle');
-    const AMBIENT_TARGET = 0.22; // kısık romantik seviye
-    // Romantic: romantik yükselme ~48s, zirve ~74s
-    // >>> Başlangıç saniyesini buradan ince ayarla <<<
-    const AMBIENT_START_AT = 48;
-    const AMBIENT_LOOP_END = 152; // finalden önce nazikçe başa dön
+    const AMBIENT_TARGET = 0.14; // daha kısık romantik seviye
+    // Wedding Harp — Francisco Alvear (~141s)
+    const AMBIENT_START_AT = 4;
+    const AMBIENT_LOOP_END = 130;
     let ambientMuted = false;
     let fadeTimer = null;
 
@@ -1467,10 +1787,10 @@ Abdullah
       let activeIdx = -1;
 
       const lines = [
-        '“Anı değişir — yön değişmez.”',
-        '“Nereye dönersen dön — pusula seni bize getirir.”',
-        '“Kuzey yok. Yönün adı: biz.”',
-        '“Öne gelen anı büyür; iğne yine aynı yüreği bulur.”',
+        'Nereye dönersen dön — yine biz.',
+        'Öne gelen anı değişir; yön aynı kalır.',
+        'Kuzey yok. Sadece biz varız.',
+        'Çevirdikçe hatırlıyoruz.',
       ];
       let lineIdx = 0;
 
@@ -1534,7 +1854,7 @@ Abdullah
           if (frontCard) {
             frontCard.classList.add('is-swap');
             setTimeout(() => {
-              if (frontKicker) frontKicker.textContent = 'Şu an önde';
+              if (frontKicker) frontKicker.textContent = 'Şimdi';
               if (frontTitle) frontTitle.textContent = p.title;
               if (frontStory) frontStory.textContent = p.story;
               frontCard.classList.remove('is-swap');
@@ -1640,6 +1960,509 @@ Abdullah
       needle.style.transform = 'rotate(0deg)';
       requestAnimationFrame(swayLoop);
       lucide.createIcons();
+    })();
+
+    /* ---------- Final kalp: yavaş 3D + yukarıdan çizim + her dokunuşta katman ---------- */
+    (function heartGift() {
+      const stage = document.getElementById('heart-stage');
+      const panel = document.querySelector('.heart-panel');
+      const canvas = document.getElementById('heart-canvas');
+      const bloomCanvas = document.getElementById('heart-bloom-canvas');
+      const awakenBtn = document.getElementById('awaken-heart');
+      const veil = document.getElementById('heart-veil');
+      const hint = document.getElementById('heart-hint');
+      const loveFinale = document.getElementById('love-finale');
+      if (!stage || !canvas || !awakenBtn) return;
+
+      const ctx = canvas.getContext('2d', { alpha: true });
+      const bloomCtx = bloomCanvas?.getContext('2d');
+      const isCoarse = window.matchMedia('(pointer: coarse)').matches
+        || window.matchMedia('(max-width: 640px)').matches;
+      const MAX_HEARTS = 5;
+      const GATHER_MS = 1200;
+      const DRAW_LERP = 0.045; // yukarıdan aşağı çizim
+
+      let w = 0, h = 0, dpr = 1;
+      let running = false;
+      let finaleShown = false;
+      let raf = 0;
+      let bloomRaf = 0;
+      let t0 = 0;
+      let heartCount = 0;
+      let drawProgress = 0; // 0→1 top→bottom
+      let drawTarget = 0;
+      let particles = [];
+      let yMin = 0, yMax = 1;
+
+      function heartPoint(t, scale) {
+        const x = 16 * Math.pow(Math.sin(t), 3);
+        const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+        return { x: x * scale, y: y * scale };
+      }
+
+      // y aralığını bir kez ölç (yukarı=0, aşağı=1)
+      (function measureHeart() {
+        let min = Infinity, max = -Infinity;
+        for (let i = 0; i <= 360; i++) {
+          const p = heartPoint((i / 360) * Math.PI * 2, 1);
+          if (p.y < min) min = p.y;
+          if (p.y > max) max = p.y;
+        }
+        yMin = min;
+        yMax = max;
+      })();
+
+      function yNorm(y, scale) {
+        const top = yMin * scale;
+        const bot = yMax * scale;
+        return (y - top) / (bot - top || 1);
+      }
+
+      function project3D(x, y, z, rotY, rotX) {
+        const cy = Math.cos(rotY), sy = Math.sin(rotY);
+        const x1 = x * cy - z * sy;
+        const z1 = x * sy + z * cy;
+        const cxr = Math.cos(rotX), sx = Math.sin(rotX);
+        const y1 = y * cxr - z1 * sx;
+        const z2 = y * sx + z1 * cxr;
+        const persp = Math.min(w, h) * 1.4;
+        const f = persp / (persp + z2);
+        return { x: x1 * f, y: y1 * f, z: z2, f };
+      }
+
+      function easeOutCubic(p) {
+        return 1 - Math.pow(1 - p, 3);
+      }
+
+      function colorRGB(hue) {
+        if (hue < 0.45) return [232, 196, 120];
+        if (hue < 0.72) return [212, 184, 122];
+        if (hue < 0.88) return [197, 160, 89];
+        if (hue < 0.95) return [255, 248, 230];
+        return [154, 122, 60];
+      }
+
+      function resize() {
+        const rect = stage.getBoundingClientRect();
+        dpr = Math.min(devicePixelRatio || 1, isCoarse ? 1.5 : 2);
+        w = Math.max(1, Math.floor(rect.width));
+        h = Math.max(1, Math.floor(rect.height));
+        canvas.width = Math.floor(w * dpr);
+        canvas.height = Math.floor(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function resizeBloom() {
+        if (!bloomCanvas || !bloomCtx) return;
+        const d = Math.min(devicePixelRatio || 1, isCoarse ? 1.25 : 1.75);
+        bloomCanvas.width = Math.floor(innerWidth * d);
+        bloomCanvas.height = Math.floor(innerHeight * d);
+        bloomCtx.setTransform(d, 0, 0, d, 0, 0);
+      }
+
+      function makeParticle(seedT, layerIdx) {
+        const layer = Math.random();
+        const inward = layer < 0.62
+          ? Math.random() * 0.06
+          : layer < 0.85
+            ? 0.07 + Math.random() * 0.2
+            : 0.22 + Math.random() * 0.38;
+        const t = seedT ?? Math.random() * Math.PI * 2;
+        const edge = Math.floor(Math.random() * 4);
+        let sx, sy;
+        if (edge === 0) { sx = Math.random() * w; sy = -24 - Math.random() * 50; }
+        else if (edge === 1) { sx = w + 24 + Math.random() * 50; sy = Math.random() * h; }
+        else if (edge === 2) { sx = Math.random() * w; sy = h + 24 + Math.random() * 50; }
+        else { sx = -24 - Math.random() * 50; sy = Math.random() * h; }
+
+        return {
+          t,
+          scaleMul: 1 - inward,
+          speed: 0.35 + Math.random() * 0.75, // yavaş, sakin akış
+          size: layer < 0.75 ? 0.55 + Math.random() * 1.35 : 1.3 + Math.random() * 2.0,
+          alpha: 0.5 + Math.random() * 0.5,
+          wobble: 4 + Math.random() * 12,
+          wobbleSpeed: 0.7 + Math.random() * 1.4,
+          phase: Math.random() * Math.PI * 2,
+          hue: Math.random(),
+          life: 0.35 + Math.random() * 0.55,
+          trailLen: 0.28 + Math.random() * 0.5,
+          sx, sy,
+          delay: Math.random() * 0.22,
+          born: performance.now(),
+          layerIdx,
+          settled: false,
+          spark: Math.random() > 0.82, // ara sıra kıvılcım
+        };
+      }
+
+      function addLayerParticles(layerIdx) {
+        const count = reduceMotion ? 50 : (isCoarse ? 150 : 240);
+        const batch = Array.from({ length: count }, (_, i) =>
+          makeParticle((i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.05, layerIdx)
+        );
+        particles.push(...batch);
+      }
+
+      function updateHint() {
+        if (!hint) return;
+        if (heartCount <= 0) {
+          hint.textContent = 'Dokunmaya devam et';
+          return;
+        }
+        if (heartCount >= MAX_HEARTS) {
+          hint.textContent = 'Kalbin tamam · senin için';
+          return;
+        }
+        const left = MAX_HEARTS - heartCount;
+        hint.textContent = `Kalp ${heartCount}/${MAX_HEARTS} · bir dokunuş daha (${left})`;
+      }
+
+      function startPageBloom(amount) {
+        if (!bloomCtx || reduceMotion) return;
+        resizeBloom();
+        const rect = stage.getBoundingClientRect();
+        const tx = rect.left + rect.width / 2;
+        const ty = rect.top + rect.height * 0.48;
+        const n = amount || (isCoarse ? 40 : 70);
+        const sparks = Array.from({ length: n }, () => {
+          const side = Math.floor(Math.random() * 4);
+          let x, y;
+          if (side === 0) { x = Math.random() * innerWidth; y = -10; }
+          else if (side === 1) { x = innerWidth + 10; y = Math.random() * innerHeight; }
+          else if (side === 2) { x = Math.random() * innerWidth; y = innerHeight + 10; }
+          else { x = -10; y = Math.random() * innerHeight; }
+          return {
+            x, y, tx: tx + (Math.random() - 0.5) * 40, ty: ty + (Math.random() - 0.5) * 30,
+            ox: x, oy: y,
+            size: 1.1 + Math.random() * 2.2,
+            hue: Math.random(),
+            delay: Math.random() * 0.35,
+          };
+        });
+        const bloomT0 = performance.now();
+        cancelAnimationFrame(bloomRaf);
+        const tick = (now) => {
+          const e = (now - bloomT0) / 1000;
+          bloomCtx.clearRect(0, 0, innerWidth, innerHeight);
+          let alive = 0;
+          bloomCtx.globalCompositeOperation = 'lighter';
+          sparks.forEach((s) => {
+            const p = Math.min(1, Math.max(0, (e - s.delay) / 1.05));
+            if (p <= 0) { alive++; return; }
+            if (p >= 1) return;
+            alive++;
+            const u = easeOutCubic(p);
+            const x = s.ox + (s.tx - s.ox) * u;
+            const y = s.oy + (s.ty - s.oy) * u;
+            const [r, g, b] = colorRGB(s.hue);
+            const a = 0.8 * (1 - p * 0.25);
+            bloomCtx.beginPath();
+            bloomCtx.fillStyle = `rgba(${r},${g},${b},${a})`;
+            bloomCtx.arc(x, y, s.size * (1.15 - p * 0.35), 0, Math.PI * 2);
+            bloomCtx.fill();
+          });
+          if (alive > 0 && e < 2) bloomRaf = requestAnimationFrame(tick);
+          else bloomCtx.clearRect(0, 0, innerWidth, innerHeight);
+        };
+        bloomRaf = requestAnimationFrame(tick);
+      }
+
+      function showLoveFinale() {
+        if (finaleShown || !loveFinale) return;
+        finaleShown = true;
+        if (typeof flash === 'function') flash();
+        if (typeof burstConfetti === 'function') {
+          burstConfetti({ hearts: true });
+          setTimeout(() => burstConfetti({ hearts: true }), 280);
+        }
+        loveFinale.classList.add('is-on');
+        loveFinale.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function hideLoveFinale() {
+        if (!loveFinale?.classList.contains('is-on')) return;
+        loveFinale.classList.remove('is-on');
+        loveFinale.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      function draw(now) {
+        if (!running) return;
+        const elapsed = (now - t0) / 1000;
+
+        drawProgress += (drawTarget - drawProgress) * DRAW_LERP;
+        if (Math.abs(drawTarget - drawProgress) < 0.002) drawProgress = drawTarget;
+
+        // sakin nabız
+        const cycle = (elapsed % 1.35) / 1.35;
+        const lub = Math.exp(-Math.pow((cycle - 0.12) * 12, 2));
+        const dub = Math.exp(-Math.pow((cycle - 0.32) * 14, 2));
+        const pulse = (lub * 0.08 + dub * 0.05) * Math.max(0.35, drawProgress);
+        const beat = 1 + pulse;
+        const glowPulse = lub * 0.4 + dub * 0.25;
+
+        const cx = w * 0.5;
+        const cy = h * 0.50;
+        const scale = Math.min(w, h) * (isCoarse ? 0.032 : 0.030) * beat;
+
+        // trail — hareket izi daha uzun kalsın (canlı his)
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = `rgba(12, 24, 18, ${isCoarse ? 0.16 : 0.12})`;
+        ctx.fillRect(0, 0, w, h);
+
+        const glowA = (0.07 + drawProgress * 0.12 + glowPulse * 0.14);
+        const glowR = Math.min(w, h) * (0.28 + pulse * 0.5);
+        const glow = ctx.createRadialGradient(cx, cy - h * 0.02, 4, cx, cy, glowR);
+        glow.addColorStop(0, `rgba(232,196,120,${glowA})`);
+        glow.addColorStop(0.4, `rgba(197,160,89,${glowA * 0.45})`);
+        glow.addColorStop(1, 'rgba(197,160,89,0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, w, h);
+
+        // 3D dönüş hâlâ yavaş; canlılık parçacıklarda
+        const rotY = elapsed * 0.26 + Math.sin(elapsed * 0.2) * 0.12;
+        const rotX = 0.2 + Math.sin(elapsed * 0.32) * 0.14;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.globalCompositeOperation = 'lighter';
+
+        if (drawProgress > 0.02) {
+          const bands = isCoarse ? 4 : 7;
+          for (let b = 0; b < bands; b++) {
+            const bandScale = scale * (1 - b * 0.028);
+            const zOff = (b - bands / 2) * scale * 0.14;
+            const steps = isCoarse ? 120 : 180;
+            let started = false;
+            ctx.beginPath();
+            for (let i = 0; i <= steps; i++) {
+              const t = (i / steps) * Math.PI * 2;
+              const p = heartPoint(t, bandScale);
+              const yn = yNorm(p.y, bandScale);
+              if (yn > drawProgress + 0.02) {
+                started = false;
+                continue;
+              }
+              const lag = elapsed * (0.55 + b * 0.12) + b;
+              const wave = (
+                Math.sin(t * 4 + lag) * (3.5 + b) +
+                Math.sin(t * 2.2 - lag * 0.7) * 2
+              ) * drawProgress;
+              const wx = p.x + Math.cos(t + lag * 0.2) * wave * 0.42;
+              const wy = p.y + Math.sin(t * 1.7 + lag) * wave * 0.28;
+              const pr = project3D(wx, wy, zOff, rotY, rotX);
+              if (!started) { ctx.moveTo(pr.x, pr.y); started = true; }
+              else ctx.lineTo(pr.x, pr.y);
+            }
+            ctx.strokeStyle = `rgba(232,196,120,${(0.12 - b * 0.012) * (0.7 + glowPulse * 0.5)})`;
+            ctx.lineWidth = (isCoarse ? 1.35 : 1.7) - b * 0.12;
+            ctx.stroke();
+          }
+
+          // çizim ucu
+          let tipX = 0, tipY = 0, tipFound = false, best = -1;
+          for (let i = 0; i <= 56; i++) {
+            const t = (i / 56) * Math.PI * 2;
+            const p = heartPoint(t, scale);
+            const yn = yNorm(p.y, scale);
+            if (yn <= drawProgress && yn > best) {
+              best = yn;
+              const pr = project3D(p.x, p.y, 0, rotY, rotX);
+              tipX = pr.x; tipY = pr.y;
+              tipFound = true;
+            }
+          }
+          if (tipFound && drawProgress < 0.98) {
+            const tipPulse = 1 + glowPulse * 0.6;
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(255,248,230,0.9)';
+            ctx.arc(tipX, tipY, 3.2 * tipPulse, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(232,196,120,0.35)';
+            ctx.arc(tipX, tipY, 11 * tipPulse, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        const drawList = [];
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const age = (now - p.born) / 1000;
+          const localP = Math.min(1, Math.max(0, (age - p.delay) / (GATHER_MS / 1000)));
+          const localE = easeOutCubic(localP);
+          const settled = localP >= 1;
+          p.settled = settled;
+
+          if (settled) {
+            // yavaş akan filament
+            p.t += 0.008 * p.speed * (1 + lub * 0.35 + dub * 0.2);
+            p.life += 0.0035;
+            if (p.life > 1) {
+              const np = makeParticle(undefined, p.layerIdx);
+              np.sx = cx + heartPoint(np.t, scale * np.scaleMul).x;
+              np.sy = cy + heartPoint(np.t, scale * np.scaleMul).y;
+              np.born = now - GATHER_MS;
+              np.delay = 0;
+              np.life = Math.random() * 0.35;
+              particles[i] = np;
+              continue;
+            }
+          }
+
+          const s = scale * p.scaleMul;
+          const target = heartPoint(p.t, s);
+          const yn = yNorm(target.y, s);
+          if (yn > drawProgress + 0.04) continue;
+
+          const depthZ = (1 - p.scaleMul) * scale * 11;
+          const wob = settled
+            ? Math.sin(elapsed * p.wobbleSpeed + p.phase) * p.wobble * (1 + pulse * 1.2)
+            : Math.sin(elapsed * 1.4 + p.phase) * p.wobble * 0.35;
+          const nx = Math.cos(p.t);
+          const ny = Math.sin(p.t);
+          const flare = (p.spark && settled) ? (1.05 + Math.sin(elapsed * 2.2 + p.phase) * 0.35) : 1;
+          const hx = target.x + nx * wob * (settled ? 0.32 : 0.1) * flare;
+          const hy = target.y + ny * wob * (settled ? 0.22 : 0.08) * flare
+            + Math.sin(elapsed * 1.6 + p.phase) * (settled ? 1.4 : 0.4);
+
+          const startX = p.sx - cx;
+          const startY = p.sy - cy;
+          const rawX = settled ? hx : startX + (hx - startX) * localE;
+          const rawY = settled ? hy : startY + (hy - startY) * localE;
+          const rawZ = settled ? depthZ : depthZ * localE;
+
+          const trail = settled ? p.trailLen * (1 + lub * 0.25) : 0.1;
+          const prev = heartPoint(p.t - trail, s);
+          const prevRawX = settled ? prev.x + nx * wob * 0.22 : startX + (prev.x - startX) * Math.max(0, localE - 0.08);
+          const prevRawY = settled ? prev.y + ny * wob * 0.14 : startY + (prev.y - startY) * Math.max(0, localE - 0.08);
+
+          const cur = project3D(rawX, rawY, rawZ, rotY, rotX);
+          const prv = project3D(prevRawX, prevRawY, rawZ * 0.9, rotY, rotX);
+          const [r, g, bcol] = colorRGB(p.hue);
+          const fade = settled
+            ? Math.sin(Math.min(1, p.life) * Math.PI)
+            : 0.45 + localE * 0.55;
+          const a = p.alpha * fade * (0.6 + cur.f * 0.55) * (0.85 + glowPulse * 0.35);
+
+          drawList.push({
+            z: cur.z,
+            x: cur.x, y: cur.y,
+            px: prv.x, py: prv.y,
+            size: p.size * cur.f * (p.spark ? 1.35 : 1) * (1 + pulse * 0.4),
+            r, g, bcol, a,
+            settled,
+            spark: p.spark,
+          });
+        }
+
+        drawList.sort((a, b) => a.z - b.z);
+        for (let i = 0; i < drawList.length; i++) {
+          const d = drawList[i];
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(${d.r},${d.g},${d.bcol},${d.a * 0.7})`;
+          ctx.lineWidth = Math.max(0.55, d.size * (d.spark ? 0.95 : 0.75));
+          ctx.lineCap = 'round';
+          ctx.moveTo(d.px, d.py);
+          ctx.lineTo(d.x, d.y);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${d.r},${d.g},${d.bcol},${d.a})`;
+          ctx.arc(d.x, d.y, d.size * (d.settled ? 0.95 : 1.15), 0, Math.PI * 2);
+          ctx.fill();
+
+          if (d.spark || d.size > 1.7) {
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(${d.r},${d.g},${d.bcol},${d.a * 0.22})`;
+            ctx.arc(d.x, d.y, d.size * 3.4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        ctx.restore();
+        raf = requestAnimationFrame(draw);
+      }
+
+      let lastAddAt = 0;
+      function addHeart(e) {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation?.();
+        }
+        const nowTap = performance.now();
+        if (nowTap - lastAddAt < 380) return; // click+touch / bubble koruması
+        lastAddAt = nowTap;
+        if (finaleShown) return;
+        if (heartCount >= MAX_HEARTS) return;
+
+        const first = !running;
+        if (first) {
+          running = true;
+          finaleShown = false;
+          stage.classList.add('is-alive');
+          panel?.classList.add('is-blooming', 'is-alive');
+          resize();
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.fillStyle = '#0C1812';
+          ctx.fillRect(0, 0, w, h);
+          t0 = performance.now();
+          if (!reduceMotion) raf = requestAnimationFrame(draw);
+        }
+
+        heartCount += 1;
+        drawTarget = heartCount / MAX_HEARTS;
+        addLayerParticles(heartCount);
+        startPageBloom(isCoarse ? 28 : 48);
+        if (typeof flash === 'function' && heartCount === 1) flash();
+        if (typeof burstConfetti === 'function') burstConfetti({ hearts: true });
+        updateHint();
+        lucide.createIcons();
+
+        if (heartCount >= MAX_HEARTS) {
+          drawTarget = 1;
+          setTimeout(() => showLoveFinale(), reduceMotion ? 400 : 1700);
+        }
+      }
+
+      awakenBtn.addEventListener('click', addHeart);
+      awakenBtn.addEventListener('touchend', addHeart, { passive: false });
+      veil?.addEventListener('click', addHeart);
+      veil?.addEventListener('touchend', (e) => { e.preventDefault(); addHeart(e); }, { passive: false });
+
+      // açıldıktan sonra sahneye her dokunuşta bir kalp daha
+      stage.addEventListener('click', (e) => {
+        if (!running || e.target.closest('#heart-veil')) return;
+        addHeart(e);
+      });
+      stage.addEventListener('touchend', (e) => {
+        if (!running || e.target.closest('#heart-veil')) return;
+        e.preventDefault();
+        addHeart(e);
+      }, { passive: false });
+
+      loveFinale?.addEventListener('click', hideLoveFinale);
+      loveFinale?.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        hideLoveFinale();
+      }, { passive: false });
+      addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') hideLoveFinale();
+      });
+
+      let resizeTimer = 0;
+      addEventListener('resize', () => {
+        if (!running || reduceMotion) return;
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          resize();
+          resizeBloom();
+          ctx.fillStyle = '#0C1812';
+          ctx.fillRect(0, 0, w, h);
+        }, 120);
+      });
     })();
 
     lucide.createIcons();
