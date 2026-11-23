@@ -1094,11 +1094,8 @@ Abdullah
       unlocked: 'leyla_letter_unlocked_v1',
     };
 
-    // Sıfırlama: ?reset=1 ile aç → tüm kayıtlar temizlenir, giriş ekranına dönülür
-    if (new URLSearchParams(location.search).has('reset')) {
-      Object.values(STORAGE).forEach((k) => localStorage.removeItem(k));
-      history.replaceState({}, '', location.pathname);
-    }
+    // Her ziyarette sıfırla: kapı, yoklama ve şifre baştan başlar
+    Object.values(STORAGE).forEach((k) => localStorage.removeItem(k));
 
     lucide.createIcons();
 
@@ -1280,7 +1277,6 @@ Abdullah
         gate.classList.add('is-hidden');
       }
       main.classList.add('is-shown');
-      localStorage.setItem(STORAGE.gate, '1');
       armReveals();
       if (withAmbient) tryPlayAmbient();
 
@@ -1298,10 +1294,6 @@ Abdullah
     }
 
     openBtn.addEventListener('click', () => openCapsule({ scroll: true, withAmbient: true, cinematic: true }));
-
-    if (localStorage.getItem(STORAGE.gate) === '1') {
-      openCapsule({ scroll: false, cinematic: false });
-    }
 
     /* Video */
     function hidePlaceholder() { videoPlaceholder?.classList.add('hidden'); }
@@ -1331,11 +1323,9 @@ Abdullah
       attendanceBtn.innerHTML = '<i data-lucide="heart" class="h-3.5 w-3.5"></i> Yoklamada — Yanında';
       lucide.createIcons();
       attendanceNote.classList.add('is-shown');
-      localStorage.setItem(STORAGE.attendance, '1');
       if (celebrate) burstConfetti();
     }
     attendanceBtn.addEventListener('click', () => { if (!attendanceBtn.disabled) markAttendance(true); });
-    if (localStorage.getItem(STORAGE.attendance) === '1') markAttendance(false);
 
     /* Kilit */
     function unlockLetter(animate = true) {
@@ -1343,7 +1333,6 @@ Abdullah
         lockPanel.classList.add('hidden');
         letterPanel.classList.remove('hidden');
         if (animate) letterPanel.querySelector('article')?.classList.add('unlock-burst');
-        localStorage.setItem(STORAGE.unlocked, '1');
         lucide.createIcons();
       };
 
@@ -1375,8 +1364,6 @@ Abdullah
         unlockInput.focus();
       }
     });
-
-    if (localStorage.getItem(STORAGE.unlocked) === '1') unlockLetter(false);
 
     /* Confetti */
     function burstConfetti({ hearts = false } = {}) {
