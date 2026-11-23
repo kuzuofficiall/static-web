@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1B3B2B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="description" content="Leyla'ya özel 24 Kasım zaman kapsülü — Abdullah" />
+  <title>Zaman Kapsülü · Leyla</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            chalk: '#1B3B2B',
+            chalkDeep: '#12261C',
+            parchment: '#FBF9F5',
+            parchmentDim: '#F3EEE4',
+            brass: '#C5A059',
+            brassSoft: '#D4B87A',
+            brassDeep: '#9A7A3C',
+            ink: '#2C241E',
+            inkMuted: '#5C5248',
+            cream: '#FFFDF8',
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --chalk: #1B3B2B;
+      --parchment: #FBF9F5;
+      --brass: #C5A059;
+      --ink: #2C241E;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      color: var(--ink);
+      background-color: var(--parchment);
+      overflow-x: hidden;
+    }
+
+    .paper-bg {
+      background-color: #FBF9F5;
+      background-image:
+        radial-gradient(ellipse at 18% -10%, rgba(197, 160, 89, 0.12), transparent 42%),
+        radial-gradient(ellipse at 95% 15%, rgba(27, 59, 43, 0.07), transparent 40%),
+        radial-gradient(ellipse at 50% 100%, rgba(197, 160, 89, 0.06), transparent 45%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    }
+
+    .grain::after {
+      content: '';
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      opacity: 0.04;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+    }
+
+    .font-display { font-family: 'Playfair Display', Georgia, serif; }
+
+    /* ---------- Frames ---------- */
+    .gold-frame {
+      border: 1px solid rgba(197, 160, 89, 0.55);
+      box-shadow:
+        inset 0 0 0 4px rgba(251, 249, 245, 0.92),
+        inset 0 0 0 5px rgba(197, 160, 89, 0.32),
+        0 22px 55px -24px rgba(44, 36, 30, 0.38);
+    }
+
+    .gold-line {
+      height: 1px;
+      width: 0;
+      margin-left: auto;
+      margin-right: auto;
+      background: linear-gradient(90deg, transparent, #C5A059, transparent);
+      transition: width 1.1s var(--ease-out);
+    }
+    .gold-line.is-drawn,
+    .reveal.is-visible .gold-line,
+    .gate-card.is-ready .gold-line {
+      width: 7rem;
+    }
+    .gold-line.w-full-draw.is-drawn,
+    .reveal.is-visible .gold-line.w-full-draw { width: 100%; }
+
+    .chalkboard {
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.05), transparent 50%),
+        linear-gradient(160deg, #1F4332 0%, #1B3B2B 45%, #14281E 100%);
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.35), 0 24px 48px -20px rgba(27, 59, 43, 0.45);
+    }
+    .chalkboard-wood {
+      background: linear-gradient(90deg, #6B4A2E, #8B5E3C 20%, #6B4A2E 50%, #8B5E3C 80%, #6B4A2E);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.25);
+    }
+    .chalk-text {
+      color: rgba(251, 249, 245, 0.92);
+      text-shadow: 0 1px 0 rgba(0,0,0,0.25);
+    }
+
+    .seal {
+      background: radial-gradient(circle at 35% 30%, #D4B87A, #C5A059 45%, #9A7A3C);
+      box-shadow:
+        0 8px 20px -6px rgba(154, 122, 60, 0.55),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+
+    .cinema-frame {
+      background: linear-gradient(145deg, #1B3B2B, #0F1F17);
+      padding: 10px;
+      border-radius: 18px;
+      box-shadow: 0 30px 60px -28px rgba(27, 59, 43, 0.55);
+      transition: transform 0.7s var(--ease-out), box-shadow 0.7s ease;
+    }
+    .reveal.is-visible .cinema-frame {
+      transform: translateY(0) scale(1);
+    }
+
+    .cinema-inner {
+      border: 1px solid rgba(197, 160, 89, 0.4);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0C1812;
+    }
+
+    /* ---------- Gate ---------- */
+    .gate {
+      transition:
+        opacity 1s var(--ease-out),
+        visibility 1s var(--ease-out),
+        filter 1s var(--ease-out),
+        transform 1s var(--ease-out);
+    }
+    .gate.is-opening {
+      filter: blur(6px);
+      transform: scale(1.04);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .gate.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .gate-card {
+      opacity: 0;
+      transform: translateY(28px) scale(0.96);
+      transition: opacity 1s var(--ease-out), transform 1s var(--ease-out);
+    }
+    .gate-card.is-ready {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .gate-stagger > * {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    }
+    .gate-card.is-ready .gate-stagger > *:nth-child(1) { transition-delay: 0.15s; opacity: 1; transform: none; }
+    .gate-card.is-ready .gate-stagger > *:nth-child(2) { transition-delay: 0.28s; opacity: 1; transform: none; }
+    .gate-card.is-ready .gate-stagger > *:nth-child(3) { transition-delay: 0.40s; opacity: 1; transform: none; }
+    .gate-card.is-ready .gate-stagger > *:nth-child(4) { transition-delay: 0.52s; opacity: 1; transform: none; }
+    .gate-card.is-ready .gate-stagger > *:nth-child(5) { transition-delay: 0.64s; opacity: 1; transform: none; }
+    .gate-card.is-ready .gate-stagger > *:nth-child(6) { transition-delay: 0.76s; opacity: 1; transform: none; }
+    .gate-card.is-ready .gate-stagger > *:nth-child(7) { transition-delay: 0.90s; opacity: 1; transform: none; }
+
+    .seal-breathe {
+      animation: sealBreathe 3.2s ease-in-out infinite;
+    }
+    @keyframes sealBreathe {
+      0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 8px 20px -6px rgba(154,122,60,0.55), 0 0 0 0 rgba(197,160,89,0.4); }
+      50% { transform: translateY(-4px) scale(1.04); box-shadow: 0 14px 28px -8px rgba(154,122,60,0.6), 0 0 0 12px rgba(197,160,89,0); }
+    }
+
+    .orb {
+      animation: orbFloat 7s ease-in-out infinite;
+      will-change: transform;
+    }
+    .orb.delay { animation-delay: -3.2s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(12px, -18px, 0) scale(1.08); }
+    }
+
+    /* ---------- Main / reveal ---------- */
+    .main-content {
+      opacity: 0;
+      transform: translateY(24px);
+      filter: blur(4px);
+      transition: opacity 1.1s var(--ease-out) 0.1s, transform 1.1s var(--ease-out) 0.1s, filter 1.1s var(--ease-out) 0.1s;
+    }
+    .main-content.is-shown {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      filter: blur(6px);
+      transition:
+        opacity 0.95s var(--ease-out),
+        transform 0.95s var(--ease-out),
+        filter 0.95s var(--ease-out);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    .reveal-child {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    }
+    .reveal.is-visible .reveal-child:nth-child(1) { transition-delay: 0.08s; opacity: 1; transform: none; }
+    .reveal.is-visible .reveal-child:nth-child(2) { transition-delay: 0.18s; opacity: 1; transform: none; }
+    .reveal.is-visible .reveal-child:nth-child(3) { transition-delay: 0.28s; opacity: 1; transform: none; }
+    .reveal.is-visible .reveal-child:nth-child(4) { transition-delay: 0.38s; opacity: 1; transform: none; }
+
+    .badge-pop {
+      transition: transform 0.6s var(--ease-out);
+    }
+    .reveal.is-visible .badge-pop {
+      animation: badgePop 0.7s var(--ease-out) both;
+    }
+    @keyframes badgePop {
+      0% { transform: scale(0.6) rotate(-8deg); }
+      60% { transform: scale(1.12) rotate(2deg); }
+      100% { transform: scale(1) rotate(0); }
+    }
+
+    /* ---------- Buttons ---------- */
+    .btn-brass {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #D4B87A 0%, #C5A059 45%, #9A7A3C 100%);
+      color: #1B3B2B;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.35) inset, 0 12px 28px -10px rgba(154, 122, 60, 0.55);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+    }
+    .btn-brass::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.45) 50%, transparent 65%);
+      transform: translateX(-120%);
+      transition: transform 0.7s ease;
+    }
+    .btn-brass:hover::before { transform: translateX(120%); }
+    .btn-brass:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 16px 36px -10px rgba(154, 122, 60, 0.7);
+      transform: translateY(-1px);
+    }
+    .btn-brass:active { transform: scale(0.98); }
+
+    .btn-chalk {
+      background: rgba(251, 249, 245, 0.1);
+      border: 1px dashed rgba(251, 249, 245, 0.55);
+      color: rgba(251, 249, 245, 0.95);
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    }
+    .btn-chalk:hover:not(:disabled) {
+      background: rgba(197, 160, 89, 0.18);
+      border-color: #C5A059;
+      box-shadow: 0 0 0 4px rgba(197,160,89,0.12);
+    }
+    .btn-chalk:disabled {
+      opacity: 0.95;
+      cursor: default;
+      border-style: solid;
+      border-color: rgba(197, 160, 89, 0.75);
+      background: rgba(197, 160, 89, 0.18);
+      animation: chalkGlow 1.2s ease both;
+    }
+    @keyframes chalkGlow {
+      0% { box-shadow: 0 0 0 0 rgba(197,160,89,0.5); }
+      100% { box-shadow: 0 0 0 12px rgba(197,160,89,0); }
+    }
+
+    /* ---------- Lock / letter ---------- */
+    .lock-shake { animation: shake 0.45s ease; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .seal-unlock {
+      animation: sealUnlock 0.85s var(--ease-out) forwards;
+    }
+    @keyframes sealUnlock {
+      0% { transform: scale(1) rotate(0); }
+      35% { transform: scale(1.15) rotate(-8deg); }
+      70% { transform: scale(0.9) rotate(6deg); opacity: 1; }
+      100% { transform: scale(1.4) rotate(12deg); opacity: 0; }
+    }
+
+    .lock-panel-out {
+      animation: lockOut 0.55s var(--ease-out) forwards;
+    }
+    @keyframes lockOut {
+      to { opacity: 0; transform: scale(0.96) translateY(-10px); filter: blur(4px); }
+    }
+
+    .unlock-burst {
+      animation: unlockPop 0.9s var(--ease-out) both;
+    }
+    @keyframes unlockPop {
+      0% { opacity: 0; transform: scale(0.9) translateY(20px) rotateX(8deg); filter: blur(4px); }
+      100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0); filter: blur(0); }
+    }
+
+    /* Tebeşir yazısı */
+    .chalk-write {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: max-height 0.7s var(--ease-out), opacity 0.6s ease 0.1s, transform 0.6s var(--ease-out) 0.1s;
+    }
+    .chalk-write.is-shown {
+      max-height: 120px;
+      opacity: 1;
+      transform: none;
+    }
+
+    .corner-ornament::before,
+    .corner-ornament::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: rgba(197, 160, 89, 0.7);
+      border-style: solid;
+      transition: width 0.6s var(--ease-out), height 0.6s var(--ease-out);
+    }
+    .corner-ornament::before { top: 10px; left: 10px; border-width: 1.5px 0 0 1.5px; }
+    .corner-ornament::after { bottom: 10px; right: 10px; border-width: 0 1.5px 1.5px 0; }
+    .gate-card.is-ready .corner-ornament::before,
+    .gate-card.is-ready .corner-ornament::after,
+    .reveal.is-visible .corner-ornament::before,
+    .reveal.is-visible .corner-ornament::after {
+      width: 22px;
+      height: 22px;
+    }
+
+    .heart-beat { animation: heartBeat 2.4s ease-in-out infinite; }
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      15% { transform: scale(1.18); }
+      30% { transform: scale(1); }
+      45% { transform: scale(1.12); }
+      60% { transform: scale(1); }
+    }
+
+    .play-pulse {
+      animation: playPulse 2.2s ease-out infinite;
+    }
+    @keyframes playPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(197,160,89,0.35); }
+      50% { box-shadow: 0 0 0 14px rgba(197,160,89,0); }
+    }
+
+    #confetti-canvas, #dust-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    #dust-canvas { z-index: 45; }
+    #confetti-canvas { z-index: 90; }
+
+    .flash-veil {
+      position: fixed;
+      inset: 0;
+      z-index: 55;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 40%, rgba(197,160,89,0.35), transparent 55%);
+      opacity: 0;
+    }
+    .flash-veil.is-on {
+      animation: flashVeil 0.9s var(--ease-out) forwards;
+    }
+    @keyframes flashVeil {
+      0% { opacity: 0; }
+      30% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #F3EEE4; }
+    ::-webkit-scrollbar-thumb { background: #C5A059; border-radius: 999px; }
+
+    .letter-body { white-space: pre-wrap; line-height: 1.85; }
+    input::placeholder { color: rgba(92, 82, 72, 0.55); }
+
+    .music-toggle.is-muted .music-icon-on { display: none; }
+    .music-toggle.is-muted .music-icon-off { display: block; }
+    .music-toggle.is-visible { display: flex; animation: unlockPop 0.6s var(--ease-out) both; }
+
+    /* ---------- Aşk Pusulası (premium) ---------- */
+    .compass-wrap {
+      position: relative;
+      padding: 0.5rem 0 0.25rem;
+    }
+    .compass-stage {
+      position: relative;
+      width: min(100%, 280px);
+      aspect-ratio: 1;
+      margin: 0 auto;
+      touch-action: none;
+      cursor: grab;
+      user-select: none;
+      filter: drop-shadow(0 18px 28px rgba(27, 59, 43, 0.22));
+    }
+    .compass-stage.is-dragging { cursor: grabbing; }
+
+    .compass-outer {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        conic-gradient(from 0deg, #8B6914, #D4B87A, #C5A059, #6B4A2E, #D4B87A, #9A7A3C, #E8D5A3, #8B6914);
+      padding: 7px;
+      box-shadow:
+        0 0 0 1px rgba(44, 36, 30, 0.25),
+        inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+    .compass-mid {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(160deg, #1F4332, #14281E 55%, #0F1F17);
+      padding: 8px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.35);
+    }
+    .compass-face {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: visible;
+      background:
+        radial-gradient(circle at 32% 28%, #FFFDF9 0%, #F7F1E6 42%, #E8DFD0 78%, #D9CDB8 100%);
+      box-shadow:
+        inset 0 0 0 1px rgba(197,160,89,0.35),
+        inset 0 0 28px rgba(154,122,60,0.12);
+    }
+    .compass-face::before {
+      content: '';
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      border: 1px dashed rgba(197,160,89,0.35);
+      pointer-events: none;
+    }
+    .compass-face::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        repeating-conic-gradient(from 0deg, rgba(197,160,89,0.14) 0deg 1.2deg, transparent 1.2deg 30deg);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .compass-dial {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      z-index: 2;
+      will-change: transform;
+    }
+
+    .compass-place {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 88px;
+      margin-left: -44px;
+      margin-top: -22px;
+      text-align: center;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .compass-place-inner {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 7px 9px;
+      border-radius: 16px;
+      background: rgba(251,249,245,0.72);
+      border: 1px solid rgba(197,160,89,0.22);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 6px 16px -12px rgba(44,36,30,0.4);
+      transform: scale(0.7);
+      opacity: 0.45;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .compass-place.is-front {
+      z-index: 7;
+    }
+    .compass-place.is-front .compass-place-inner {
+      background: linear-gradient(160deg, #FFFDF8, #F3E6C8);
+      border-color: rgba(197,160,89,0.85);
+      box-shadow:
+        0 14px 30px -12px rgba(154,122,60,0.55),
+        0 0 0 3px rgba(197,160,89,0.15);
+    }
+    .compass-place-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #C5A059;
+      box-shadow: 0 0 0 2px rgba(197,160,89,0.2);
+    }
+    .compass-place.is-front .compass-place-dot {
+      background: #1B3B2B;
+      box-shadow: 0 0 0 3px rgba(27,59,43,0.15);
+    }
+    .compass-place-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.15;
+      color: #2C241E;
+    }
+    .compass-place-sub {
+      font-size: 7.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: rgba(92,82,72,0.7);
+    }
+
+    .compass-biz {
+      position: absolute;
+      left: 50%;
+      top: 10px;
+      transform: translateX(-50%);
+      z-index: 8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      pointer-events: none;
+    }
+    .compass-biz-heart {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 35% 30%, #E8D5A3, #C5A059 48%, #8B6914);
+      box-shadow:
+        0 8px 18px -6px rgba(154,122,60,0.7),
+        0 0 0 3px rgba(251,249,245,0.95),
+        0 0 0 5px rgba(197,160,89,0.35);
+      animation: sealBreathe 3.2s ease-in-out infinite;
+    }
+    .compass-biz-text {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: #1B3B2B;
+      text-transform: uppercase;
+      text-shadow: 0 1px 0 rgba(255,253,248,0.8);
+    }
+
+    .compass-needle {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      will-change: transform;
+    }
+    .compass-needle svg {
+      width: 42%;
+      height: 62%;
+      overflow: visible;
+      filter: drop-shadow(0 6px 10px rgba(27,59,43,0.28));
+    }
+    .compass-hub {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 9;
+      width: 18px;
+      height: 18px;
+      margin: -9px 0 0 -9px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #F8E9C0, #C5A059 50%, #6B4A2E);
+      box-shadow:
+        0 0 0 3px rgba(27,59,43,0.4),
+        0 0 0 5px rgba(197,160,89,0.35),
+        0 3px 8px rgba(0,0,0,0.25);
+    }
+
+    .compass-front-card {
+      margin-top: 1.35rem;
+      text-align: center;
+      min-height: 5rem;
+      padding: 0.85rem 0.75rem;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,253,248,0.9), rgba(243,238,228,0.65));
+      border: 1px solid rgba(197,160,89,0.28);
+      transition: opacity 0.3s ease, transform 0.35s var(--ease-out);
+    }
+    .compass-front-card.is-swap {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    .compass-front-kicker {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #9A7A3C;
+    }
+    .compass-front-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.2rem;
+      color: #1B3B2B;
+      margin-top: 0.3rem;
+    }
+    .compass-front-story {
+      margin-top: 0.4rem;
+      font-size: 0.8125rem;
+      line-height: 1.55;
+      color: #5C5248;
+      max-width: 28ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .compass-caption {
+      min-height: 1.25rem;
+      transition: opacity 0.4s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal, .gate-card, .main-content, .gate-stagger > *, .reveal-child {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="paper-bg grain antialiased">
+
+  <canvas id="dust-canvas" aria-hidden="true"></canvas>
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+  <div id="flash-veil" class="flash-veil" aria-hidden="true"></div>
+
+  <!-- ===================== GİRİŞ KAPISI ===================== -->
+  <div id="gate" class="gate fixed inset-0 z-50 flex items-center justify-center px-5 py-10">
+    <div class="absolute inset-0 bg-gradient-to-b from-chalkDeep via-chalk to-chalkDeep"></div>
+    <div class="absolute inset-0 opacity-25" style="background-image:url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E&quot;);"></div>
+
+    <div class="orb absolute top-16 left-8 h-44 w-44 rounded-full bg-brass/15 blur-3xl"></div>
+    <div class="orb delay absolute bottom-20 right-6 h-52 w-52 rounded-full bg-brass/12 blur-3xl"></div>
+    <div class="orb absolute top-1/3 right-1/4 h-24 w-24 rounded-full bg-parchment/5 blur-2xl" style="animation-delay:-1.5s"></div>
+
+    <div class="relative w-full max-w-md">
+      <div id="gate-card" class="gate-card gold-frame corner-ornament relative rounded-2xl bg-parchment/95 px-6 py-9 text-center shadow-soft backdrop-blur-sm sm:px-8 sm:py-10">
+        <div class="gate-stagger">
+          <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full seal seal-breathe">
+            <i data-lucide="hourglass" class="h-6 w-6 text-chalk"></i>
+          </div>
+
+          <p class="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-brassDeep">Zaman Kapsülü</p>
+
+          <h1 class="font-display text-[1.65rem] leading-snug text-ink sm:text-[1.9rem]">
+            Geleceğin En İyi<br />
+            <span class="italic text-chalk">Sosyal Bilgiler</span><br />
+            Öğretmenine…
+          </h1>
+
+          <div class="gold-line my-5"></div>
+
+          <p class="text-sm leading-relaxed text-inkMuted sm:text-[15px]">
+            24 Kasım 2026<br />
+            <span class="text-ink/80">Dicle Üniversitesi’nden Sınıf Tahtasına</span>
+          </p>
+
+          <button
+            id="open-capsule"
+            type="button"
+            class="btn-brass mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold tracking-wide sm:mx-auto sm:w-auto sm:min-w-[240px]"
+          >
+            <i data-lucide="lock-open" class="h-4 w-4"></i>
+            Zaman Kapsülünü Aç
+          </button>
+
+          <p class="mt-4 text-[11px] tracking-wide text-inkMuted/80">Leyla için mühürlendi · Abdullah</p>
+        </div>
+      </div>
+
+      <!--
+        AMBIENT MÜZİK (Mixkit ücretsiz lisans):
+        Seçilen: "Romantic" — Francisco Alvear (Mixkit)
+        Karşılaştırma için: ambient-harp.mp3 = Wedding Harp yedeği
+        Kendi şarkın: ambient.mp3 dosyasını değiştirmen yeterli.
+      -->
+      <audio id="ambient-audio" src="ambient.mp3" preload="auto"></audio>
+    </div>
+  </div>
+
+  <!-- Ses aç/kapa (kapsül açılınca görünür) -->
+  <button
+    id="music-toggle"
+    type="button"
+    class="music-toggle fixed bottom-5 right-5 z-[55] hidden h-12 w-12 items-center justify-center rounded-full border border-brass/40 bg-cream/95 text-chalk shadow-soft backdrop-blur-sm transition hover:border-brass hover:scale-105 active:scale-95"
+    aria-label="Müziği aç veya kapat"
+    title="Müzik"
+  >
+    <i data-lucide="volume-2" class="music-icon-on h-5 w-5"></i>
+    <i data-lucide="volume-x" class="music-icon-off hidden h-5 w-5"></i>
+  </button>
+
+  <!-- ===================== ANA İÇERİK ===================== -->
+  <main id="main" class="main-content relative mx-auto max-w-lg px-5 pb-16 pt-8 sm:max-w-xl sm:px-6">
+
+    <header class="mb-10 text-center reveal">
+      <div class="reveal-child mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-brass/40 bg-cream">
+        <i data-lucide="book-open" class="h-4 w-4 text-chalk"></i>
+      </div>
+      <p class="reveal-child text-[11px] font-semibold uppercase tracking-[0.25em] text-brassDeep">Leyla &amp; Abdullah</p>
+      <h2 class="reveal-child font-display mt-2 text-2xl text-ink sm:text-[1.75rem]">Öğretmenler Günü Arşivi</h2>
+      <div class="reveal-child gold-line mx-auto mt-4"></div>
+    </header>
+
+    <!-- BÖLÜM 1 -->
+    <section id="story" class="mb-14 reveal">
+      <div class="mb-4 flex items-start gap-3">
+        <span class="badge-pop mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-chalk text-[11px] font-bold text-parchment">01</span>
+        <div class="reveal-child">
+          <h3 class="font-display text-xl text-ink sm:text-[1.35rem]">Eğitim Fakültesi Kantininden Başlayan Yolculuk</h3>
+          <p class="mt-2 text-sm leading-relaxed text-inkMuted">
+            Dicle Üniversitesi kantininde başlayan, Pine Cafe’de demlenen ve Dağkapı’da elini tuttuğum o anla en güzel rotasına giren hikâyemiz…
+          </p>
+        </div>
+      </div>
+
+      <!--
+        VİDEO: hikayemiz.mp4 (+ opsiyonel hikayemiz-poster.jpg) aynı klasöre
+      -->
+      <div class="cinema-frame reveal-child mt-6">
+        <div class="cinema-inner relative aspect-[9/16] max-h-[70vh] sm:aspect-video sm:max-h-none">
+          <video
+            id="story-video"
+            class="h-full w-full object-cover"
+            controls
+            playsinline
+            preload="metadata"
+            poster="hikayemiz-poster.jpg"
+          >
+            <source src="hikayemiz.mp4" type="video/mp4" />
+          </video>
+
+          <div id="video-placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-chalkDeep to-chalk px-6 text-center">
+            <div class="play-pulse mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-brass/40 bg-brass/10">
+              <i data-lucide="clapperboard" class="h-7 w-7 text-brassSoft"></i>
+            </div>
+            <p class="font-display text-lg text-parchment">Hikâyemizin Fragmanı</p>
+            <p class="mt-2 max-w-[220px] text-xs leading-relaxed text-parchment/65">
+              Video eklendiğinde burada oynar. Şimdilik bu kare seni bekliyor.
+            </p>
+            <button id="try-play" type="button" class="btn-brass mt-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold">
+              <i data-lucide="play" class="h-3.5 w-3.5"></i>
+              Fragmanı Oynat
+            </button>
+          </div>
+        </div>
+        <div class="mt-2 flex items-center justify-between px-1 text-[10px] uppercase tracking-[0.18em] text-brassSoft/80">
+          <span>Leyla · Abdullah</span>
+          <span>24.11.2026</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- BÖLÜM 2 -->
+    <section id="attendance" class="mb-14 reveal">
+      <div class="mb-4 flex items-start gap-3">
+        <span class="badge-pop mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-chalk text-[11px] font-bold text-parchment">02</span>
+        <div class="reveal-child">
+          <h3 class="font-display text-xl text-ink sm:text-[1.35rem]">İlk Sınıf Yoklaması</h3>
+          <p class="mt-2 text-sm leading-relaxed text-inkMuted">
+            Tahtanın önünde, defterin ilk satırında — senin sınıfın, benim yerim.
+          </p>
+        </div>
+      </div>
+
+      <div class="reveal-child mt-5 overflow-hidden rounded-2xl shadow-soft">
+        <div class="chalkboard-wood h-3 w-full"></div>
+        <div class="chalkboard px-5 py-6 sm:px-6 sm:py-7">
+          <div class="mb-5 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.22em] text-brassSoft/90">Yoklama Defteri</p>
+              <p class="font-display mt-1 text-lg chalk-text">24 Kasım 2026 — İlk Ders</p>
+            </div>
+            <i data-lucide="clipboard-list" class="h-5 w-5 text-brassSoft/80"></i>
+          </div>
+
+          <div class="mb-5 space-y-1 text-sm chalk-text/90">
+            <p><span class="text-brassSoft/80">Öğretmen:</span> Leyla Öğretmen</p>
+            <p><span class="text-brassSoft/80">Branş:</span> Sosyal Bilgiler</p>
+          </div>
+
+          <div class="rounded-xl border border-dashed border-white/20 bg-black/15 px-4 py-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div class="text-sm chalk-text">
+                <p class="text-[11px] uppercase tracking-wider text-brassSoft/75">Öğrenci</p>
+                <p class="mt-1 font-medium">No: <span class="text-brassSoft">2411</span> · Abdullah</p>
+              </div>
+
+              <button
+                id="attendance-btn"
+                type="button"
+                class="btn-chalk inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold tracking-wide"
+              >
+                <i data-lucide="check" class="h-3.5 w-3.5"></i>
+                Burada — Her Zaman Yanında ✓
+              </button>
+            </div>
+
+            <p id="attendance-note" class="chalk-write mt-4 text-sm italic leading-relaxed text-brassSoft">
+              “İlk öğrencin olarak notumu senden bekliyorum hocam…”
+            </p>
+          </div>
+        </div>
+        <div class="chalkboard-wood h-3 w-full"></div>
+      </div>
+    </section>
+
+    <!-- BÖLÜM 3: AŞK PUSULASI -->
+    <section id="compass" class="mb-14 reveal">
+      <div class="mb-4 flex items-start gap-3">
+        <span class="badge-pop mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-chalk text-[11px] font-bold text-parchment">03</span>
+        <div class="reveal-child">
+          <h3 class="font-display text-xl text-ink sm:text-[1.35rem]">Aşk Pusulası</h3>
+          <p class="mt-2 text-sm leading-relaxed text-inkMuted">
+            Anılarımız etrafta dönüyor. Hangisi öne gelirse gelsin — iğne yine <span class="text-ink font-medium">bizi</span> bulur.
+          </p>
+        </div>
+      </div>
+
+      <div class="reveal-child gold-frame corner-ornament relative mt-5 overflow-hidden rounded-2xl bg-cream px-5 py-8 sm:px-7">
+        <div class="orb absolute -right-10 -top-10 h-32 w-32 rounded-full bg-brass/10 blur-2xl"></div>
+        <div class="orb delay absolute -bottom-12 -left-8 h-28 w-28 rounded-full bg-chalk/10 blur-2xl"></div>
+
+        <div class="relative mb-5 text-center">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.26em] text-brassDeep">Yönün hep biziz</p>
+          <div class="gold-line mx-auto mt-3 w-16 is-drawn"></div>
+        </div>
+
+        <div class="compass-wrap relative">
+          <div class="compass-stage" id="compass-stage" aria-label="Aşk pusulası">
+            <div class="compass-outer">
+              <div class="compass-mid">
+                <div class="compass-face">
+                  <div class="compass-dial" id="compass-dial"></div>
+
+                  <div class="compass-biz">
+                    <div class="compass-biz-heart">
+                      <i data-lucide="heart" class="h-3.5 w-3.5 text-chalk"></i>
+                    </div>
+                    <span class="compass-biz-text">Biz</span>
+                  </div>
+
+                  <div class="compass-needle" id="compass-needle">
+                    <svg viewBox="0 0 40 120" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="needleN" x1="0" y1="1" x2="0" y2="0">
+                          <stop offset="0%" stop-color="#14281E"/>
+                          <stop offset="100%" stop-color="#1B3B2B"/>
+                        </linearGradient>
+                        <linearGradient id="needleS" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#D4B87A"/>
+                          <stop offset="100%" stop-color="#9A7A3C"/>
+                        </linearGradient>
+                      </defs>
+                      <polygon points="20,4 28,58 20,52 12,58" fill="url(#needleN)"/>
+                      <polygon points="20,116 28,62 20,68 12,62" fill="url(#needleS)"/>
+                      <circle cx="20" cy="60" r="4.5" fill="#C5A059" stroke="#1B3B2B" stroke-width="1.5"/>
+                    </svg>
+                  </div>
+                  <div class="compass-hub"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="compass-front-card" class="compass-front-card relative">
+          <p class="compass-front-kicker" id="compass-front-kicker">Şu an önde</p>
+          <p class="compass-front-title" id="compass-front-title">İlk Merhaba</p>
+          <p class="compass-front-story" id="compass-front-story">Eğitim Fakültesi kantininde başlayan bakış — her şeyin ilk adımı.</p>
+        </div>
+
+        <p id="compass-caption" class="compass-caption relative mt-4 text-center font-display text-sm italic text-ink/85">
+          “Anı değişir — yön değişmez.”
+        </p>
+
+        <div class="relative mt-5 flex flex-col items-center gap-2">
+          <button id="compass-calibrate" type="button" class="btn-brass inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold">
+            <i data-lucide="compass" class="h-3.5 w-3.5"></i>
+            Pusulayı Kalibre Et
+          </button>
+          <p class="text-[10px] tracking-wide text-inkMuted/80">Sürükle veya çevir — öne gelen anı büyür</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BÖLÜM 4 -->
+    <section id="future-letter" class="mb-12 reveal">
+      <div class="mb-4 flex items-start gap-3">
+        <span class="badge-pop mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-chalk text-[11px] font-bold text-parchment">04</span>
+        <div class="reveal-child">
+          <h3 class="font-display text-xl text-ink sm:text-[1.35rem]">Gelecekteki Sınıfına Not</h3>
+          <p class="mt-2 text-sm leading-relaxed text-inkMuted">
+            Bu bölüm, bizim başlangıcımızın anahtarıyla açılmak üzere mühürlendi.
+          </p>
+        </div>
+      </div>
+
+      <div id="lock-panel" class="gold-frame corner-ornament reveal-child relative mt-5 overflow-hidden rounded-2xl bg-cream px-5 py-8 text-center sm:px-8">
+        <div class="orb absolute -right-8 -top-8 h-28 w-28 rounded-full bg-brass/10 blur-2xl"></div>
+        <div class="orb delay absolute -bottom-10 -left-6 h-28 w-28 rounded-full bg-chalk/10 blur-2xl"></div>
+
+        <div class="relative">
+          <div id="lock-seal" class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full seal seal-breathe">
+            <i id="lock-icon" data-lucide="lock" class="h-7 w-7 text-chalk"></i>
+          </div>
+
+          <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-brassDeep">Mühürlü Zarf</p>
+          <p class="font-display mt-2 text-lg text-ink">Bizim Başlangıcımızla Açılır</p>
+          <p class="mx-auto mt-2 max-w-xs text-xs leading-relaxed text-inkMuted">
+            Doğru anahtarı girdiğinde sana yazılan not açılır.
+          </p>
+          <p class="mx-auto mt-3 max-w-xs text-[11px] italic leading-relaxed text-brassDeep/80">
+            İpucu: “Bir daha görürsem” dedi… sonra kaç gün?
+          </p>
+
+          <form id="unlock-form" class="mx-auto mt-6 flex max-w-xs flex-col gap-3" autocomplete="off">
+            <label for="unlock-input" class="sr-only">Şifre</label>
+            <input
+              id="unlock-input"
+              type="password"
+              inputmode="text"
+              class="w-full rounded-xl border border-brass/35 bg-parchment px-4 py-3 text-center text-sm tracking-[0.2em] text-ink outline-none transition focus:border-brass focus:ring-2 focus:ring-brass/25"
+              placeholder="••••"
+              maxlength="24"
+            />
+            <button type="submit" class="btn-brass inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold">
+              <i data-lucide="key-round" class="h-4 w-4"></i>
+              Mührü Aç
+            </button>
+            <p id="unlock-error" class="hidden text-xs text-[#8B4513]">Henüz erken, hocam…</p>
+          </form>
+        </div>
+      </div>
+
+      <!-- >>> MEKTUP METNİNİ #secret-letter-text İÇİNE YAPIŞTIR <<< -->
+      <div id="letter-panel" class="mt-5 hidden">
+        <article class="gold-frame unlock-burst relative rounded-2xl bg-cream px-5 py-7 sm:px-8 sm:py-8">
+          <div class="mb-5 flex items-center gap-2 text-brassDeep">
+            <i data-lucide="mail-open" class="h-4 w-4"></i>
+            <span class="text-[11px] font-semibold uppercase tracking-[0.2em]">Gelecekteki Leyla Öğretmen’e</span>
+          </div>
+          <div class="gold-line w-full-draw mb-5 is-drawn"></div>
+
+          <div id="secret-letter-text" class="letter-body font-display text-[15px] text-ink/90 sm:text-base">
+Leyla,
+
+Bunu yazarken biraz zorlanıyorum.
+Çünkü doğru cümleyi bulamıyorum.
+Belki de doğru cümle yok.
+
+Sen…
+benim tanıdığım en iyi insanlardan birisin.
+Merhametin var. Sabırın var.
+Birini kırmadan durmayı biliyorsun.
+Ben bunu senden önce bu kadar net görmemiştim.
+
+Senden önce sevmek bende daha yüzeydeydi.
+Sen gelince anladım.
+Sevmek… sabretmekmiş.
+Yanında kalmakmış.
+Kızınca bile yumuşak kalabilmekmiş.
+
+Ben bunları senden öğrendim.
+Kitaptan değil.
+Senden.
+Her gün.
+
+Bazen korkuyorum.
+Bu kadar iyi birini hak ediyor muyum, diye.
+Sonra sen yine yanımda oluyorsun.
+Hiçbir şey demeden.
+Sadece varlığınla.
+
+Bir gün sınıfın olacak.
+Çocuklar seni “hocam” diyecek.
+Ben o günü düşündükçe içim ısınıyor.
+Çünkü o çocuklar seni tanıyacak…
+ama ben seni daha önce tanıdım.
+Sen daha kimsenin öğretmeni değilken,
+benim öğretmenim oldun.
+
+Bu mektubu ileride okursan şunu bil:
+O gün de seni seviyorum.
+Yorulmuş olsan da.
+Zor bir günün olsa da.
+Hâlâ aynı şekilde.
+
+Teşekkür ederim.
+Beni daha iyi biri yaptığın için.
+İyi ki varsın.
+
+Seni çok seviyorum Leyla.
+
+Abdullah
+24 Kasım 2026
+          </div>
+
+          <div class="gold-line w-full-draw my-6 is-drawn"></div>
+          <p class="text-center text-xs italic text-inkMuted">Mühür 24 Kasım 2026’da kondu · Üç günün anahtarıyla açıldı</p>
+        </article>
+      </div>
+    </section>
+
+    <footer class="reveal border-t border-brass/20 pt-8 text-center">
+      <i data-lucide="heart" class="heart-beat mx-auto h-4 w-4 text-brass"></i>
+      <p class="reveal-child font-display mt-3 text-sm leading-relaxed text-ink sm:text-[15px]">
+        Seninle her yola ve her sınıfa varım.
+      </p>
+      <p class="reveal-child mt-2 text-xs tracking-wide text-inkMuted">— Abdullah · 24 Kasım 2026</p>
+      <p class="reveal-child mt-6 text-[10px] uppercase tracking-[0.2em] text-brassDeep/70">Dicle’den sınıfa · Zaman kapsülü</p>
+    </footer>
+  </main>
+
+  <script>
+    // >>> ŞİFREYİ BURADAN DEĞİŞTİR <<<
+    const UNLOCK_PASSWORD = '3gun';
+    const STORAGE = {
+      gate: 'leyla_capsule_opened_v1',
+      attendance: 'leyla_attendance_taken_v1',
+      unlocked: 'leyla_letter_unlocked_v1',
+    };
+
+    // Sıfırlama: ?reset=1 ile aç → tüm kayıtlar temizlenir, giriş ekranına dönülür
+    if (new URLSearchParams(location.search).has('reset')) {
+      Object.values(STORAGE).forEach((k) => localStorage.removeItem(k));
+      history.replaceState({}, '', location.pathname);
+    }
+
+    lucide.createIcons();
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const ambientAudio = document.getElementById('ambient-audio');
+    const musicToggle = document.getElementById('music-toggle');
+    const AMBIENT_TARGET = 0.22; // kısık romantik seviye
+    // Romantic: romantik yükselme ~48s, zirve ~74s
+    // >>> Başlangıç saniyesini buradan ince ayarla <<<
+    const AMBIENT_START_AT = 48;
+    const AMBIENT_LOOP_END = 152; // finalden önce nazikçe başa dön
+    let ambientMuted = false;
+    let fadeTimer = null;
+
+    function fadeAmbientTo(target, ms = 1800) {
+      if (!ambientAudio) return;
+      if (fadeTimer) cancelAnimationFrame(fadeTimer);
+      const start = ambientAudio.volume;
+      const t0 = performance.now();
+      const step = (now) => {
+        const p = Math.min(1, (now - t0) / ms);
+        const eased = 1 - Math.pow(1 - p, 3);
+        ambientAudio.volume = start + (target - start) * eased;
+        if (p < 1) fadeTimer = requestAnimationFrame(step);
+      };
+      fadeTimer = requestAnimationFrame(step);
+    }
+
+    function seekRomanticStart() {
+      if (!ambientAudio) return;
+      try {
+        ambientAudio.currentTime = AMBIENT_START_AT;
+      } catch (_) {}
+    }
+
+    function tryPlayAmbient() {
+      if (!ambientAudio || ambientMuted) return;
+      // Sessiz başla → romantik bölüm → yumuşak fade-in
+      ambientAudio.volume = 0.01;
+      const startPlay = () => {
+        seekRomanticStart();
+        ambientAudio.play()
+          .then(() => {
+            fadeAmbientTo(AMBIENT_TARGET, 2200);
+            musicToggle?.classList.add('is-visible');
+            lucide.createIcons();
+          })
+          .catch(() => {});
+      };
+      if (ambientAudio.readyState >= 1) startPlay();
+      else ambientAudio.addEventListener('loadedmetadata', startPlay, { once: true });
+    }
+
+    // Romantik bölümde döngü (başa/introya düşmesin)
+    ambientAudio?.addEventListener('timeupdate', () => {
+      if (!ambientAudio || ambientMuted) return;
+      if (ambientAudio.currentTime >= AMBIENT_LOOP_END) {
+        ambientAudio.currentTime = AMBIENT_START_AT;
+      }
+    });
+    ambientAudio?.addEventListener('ended', () => {
+      if (ambientMuted) return;
+      seekRomanticStart();
+      ambientAudio.play().catch(() => {});
+    });
+
+    function setAmbientMuted(muted) {
+      ambientMuted = muted;
+      musicToggle?.classList.toggle('is-muted', muted);
+      if (!ambientAudio) return;
+      if (muted) {
+        fadeAmbientTo(0, 400);
+        setTimeout(() => ambientAudio.pause(), 420);
+      } else {
+        ambientAudio.play().then(() => fadeAmbientTo(AMBIENT_TARGET, 900)).catch(() => {});
+      }
+      lucide.createIcons();
+    }
+
+    musicToggle?.addEventListener('click', () => setAmbientMuted(!ambientMuted));
+
+    const gate = document.getElementById('gate');
+    const gateCard = document.getElementById('gate-card');
+    const main = document.getElementById('main');
+    const openBtn = document.getElementById('open-capsule');
+    const attendanceBtn = document.getElementById('attendance-btn');
+    const attendanceNote = document.getElementById('attendance-note');
+    const unlockForm = document.getElementById('unlock-form');
+    const unlockInput = document.getElementById('unlock-input');
+    const unlockError = document.getElementById('unlock-error');
+    const lockPanel = document.getElementById('lock-panel');
+    const lockSeal = document.getElementById('lock-seal');
+    const letterPanel = document.getElementById('letter-panel');
+    const storyVideo = document.getElementById('story-video');
+    const videoPlaceholder = document.getElementById('video-placeholder');
+    const tryPlayBtn = document.getElementById('try-play');
+    const flashVeil = document.getElementById('flash-veil');
+
+    /* Gate intro */
+    requestAnimationFrame(() => {
+      setTimeout(() => gateCard.classList.add('is-ready'), reduceMotion ? 0 : 80);
+    });
+
+    /* Dust particles on gate */
+    (function dust() {
+      const canvas = document.getElementById('dust-canvas');
+      if (!canvas || reduceMotion) return;
+      const ctx = canvas.getContext('2d');
+      let w, h, particles, raf;
+
+      function resize() {
+        const dpr = Math.min(devicePixelRatio || 1, 2);
+        w = innerWidth; h = innerHeight;
+        canvas.width = w * dpr; canvas.height = h * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        particles = Array.from({ length: 36 }, () => ({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.8 + 0.4,
+          vy: -(Math.random() * 0.25 + 0.05),
+          vx: (Math.random() - 0.5) * 0.15,
+          a: Math.random() * 0.35 + 0.1,
+        }));
+      }
+
+      function tick() {
+        if (gate.classList.contains('is-opening') || gate.classList.contains('is-hidden')) {
+          ctx.clearRect(0, 0, w, h);
+          return;
+        }
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach((p) => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.y < -10) { p.y = h + 10; p.x = Math.random() * w; }
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(197,160,89,${p.a})`;
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        raf = requestAnimationFrame(tick);
+      }
+
+      resize();
+      addEventListener('resize', resize);
+      raf = requestAnimationFrame(tick);
+    })();
+
+    /* Reveal */
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.14, rootMargin: '0px 0px -8% 0px' }
+    );
+
+    function armReveals() {
+      revealEls.forEach((el) => revealObserver.observe(el));
+    }
+
+    function flash() {
+      if (reduceMotion) return;
+      flashVeil.classList.remove('is-on');
+      void flashVeil.offsetWidth;
+      flashVeil.classList.add('is-on');
+    }
+
+    function openCapsule({ scroll = true, withAmbient = false, cinematic = false } = {}) {
+      if (cinematic && !reduceMotion) {
+        flash();
+        gate.classList.add('is-opening');
+      } else {
+        gate.classList.add('is-hidden');
+      }
+      main.classList.add('is-shown');
+      localStorage.setItem(STORAGE.gate, '1');
+      armReveals();
+      if (withAmbient) tryPlayAmbient();
+
+      setTimeout(() => {
+        revealEls.forEach((el) => {
+          if (el.getBoundingClientRect().top < innerHeight * 0.92) el.classList.add('is-visible');
+        });
+      }, cinematic ? 350 : 180);
+
+      if (scroll) {
+        setTimeout(() => {
+          document.getElementById('story')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, cinematic ? 700 : 450);
+      }
+    }
+
+    openBtn.addEventListener('click', () => openCapsule({ scroll: true, withAmbient: true, cinematic: true }));
+
+    if (localStorage.getItem(STORAGE.gate) === '1') {
+      openCapsule({ scroll: false, cinematic: false });
+    }
+
+    /* Video */
+    function hidePlaceholder() { videoPlaceholder?.classList.add('hidden'); }
+    storyVideo.addEventListener('loadeddata', () => { if (storyVideo.videoWidth > 0) hidePlaceholder(); });
+    storyVideo.addEventListener('error', () => videoPlaceholder?.classList.remove('hidden'));
+    storyVideo.addEventListener('play', () => {
+      hidePlaceholder();
+      // Video varken ambient’i kıs
+      if (ambientAudio && !ambientAudio.paused) fadeAmbientTo(0.05, 500);
+    });
+    storyVideo.addEventListener('pause', () => {
+      if (ambientAudio && !ambientMuted && !ambientAudio.paused) fadeAmbientTo(AMBIENT_TARGET, 800);
+    });
+    storyVideo.addEventListener('ended', () => {
+      if (ambientAudio && !ambientMuted) {
+        ambientAudio.play().then(() => fadeAmbientTo(AMBIENT_TARGET, 1000)).catch(() => {});
+      }
+    });
+    tryPlayBtn?.addEventListener('click', async () => {
+      try { hidePlaceholder(); await storyVideo.play(); }
+      catch { storyVideo.controls = true; videoPlaceholder?.classList.remove('hidden'); }
+    });
+
+    /* Yoklama */
+    function markAttendance(celebrate = true) {
+      attendanceBtn.disabled = true;
+      attendanceBtn.innerHTML = '<i data-lucide="heart" class="h-3.5 w-3.5"></i> Yoklamada — Yanında';
+      lucide.createIcons();
+      attendanceNote.classList.add('is-shown');
+      localStorage.setItem(STORAGE.attendance, '1');
+      if (celebrate) burstConfetti();
+    }
+    attendanceBtn.addEventListener('click', () => { if (!attendanceBtn.disabled) markAttendance(true); });
+    if (localStorage.getItem(STORAGE.attendance) === '1') markAttendance(false);
+
+    /* Kilit */
+    function unlockLetter(animate = true) {
+      const finish = () => {
+        lockPanel.classList.add('hidden');
+        letterPanel.classList.remove('hidden');
+        if (animate) letterPanel.querySelector('article')?.classList.add('unlock-burst');
+        localStorage.setItem(STORAGE.unlocked, '1');
+        lucide.createIcons();
+      };
+
+      if (!animate || reduceMotion) {
+        finish();
+        return;
+      }
+
+      lockSeal.classList.add('seal-unlock');
+      lockPanel.classList.add('lock-panel-out');
+      flash();
+      setTimeout(finish, 520);
+    }
+
+    unlockForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const value = (unlockInput.value || '').trim().toLowerCase();
+      const expected = String(UNLOCK_PASSWORD).trim().toLowerCase();
+      if (value === expected) {
+        unlockError.classList.add('hidden');
+        unlockLetter(true);
+        setTimeout(() => burstConfetti({ hearts: true }), 280);
+      } else {
+        unlockError.classList.remove('hidden');
+        unlockForm.classList.remove('lock-shake');
+        void unlockForm.offsetWidth;
+        unlockForm.classList.add('lock-shake');
+        unlockInput.value = '';
+        unlockInput.focus();
+      }
+    });
+
+    if (localStorage.getItem(STORAGE.unlocked) === '1') unlockLetter(false);
+
+    /* Confetti */
+    function burstConfetti({ hearts = false } = {}) {
+      if (reduceMotion) return;
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      canvas.width = innerWidth * dpr;
+      canvas.height = innerHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const colors = ['#C5A059', '#1B3B2B', '#D4B87A', '#FBF9F5', '#8B5E3C', '#E8D5A3'];
+      const pieces = Array.from({ length: hearts ? 64 : 80 }, () => ({
+        x: innerWidth * 0.5 + (Math.random() - 0.5) * 140,
+        y: innerHeight * 0.4,
+        vx: (Math.random() - 0.5) * 11,
+        vy: -Math.random() * 11 - 5,
+        g: 0.17 + Math.random() * 0.1,
+        r: 3 + Math.random() * 4.5,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.3,
+        color: colors[(Math.random() * colors.length) | 0],
+        heart: hearts && Math.random() > 0.4,
+      }));
+
+      let frame;
+      const start = performance.now();
+
+      function drawHeart(x, y, size, color, rot) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rot);
+        ctx.scale(size / 12, size / 12);
+        ctx.beginPath();
+        ctx.moveTo(0, 4);
+        ctx.bezierCurveTo(0, 0, -6, 0, -6, 4);
+        ctx.bezierCurveTo(-6, 8, 0, 12, 0, 16);
+        ctx.bezierCurveTo(0, 12, 6, 8, 6, 4);
+        ctx.bezierCurveTo(6, 0, 0, 0, 0, 4);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function tick(now) {
+        const t = (now - start) / 1000;
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        pieces.forEach((p) => {
+          p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+          ctx.globalAlpha = Math.max(0, 1 - t / 2.3);
+          if (p.heart) drawHeart(p.x, p.y, p.r * 3.2, p.color, p.rot);
+          else {
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.r, -p.r * 0.4, p.r * 2, p.r * 0.8);
+            ctx.restore();
+          }
+        });
+        ctx.globalAlpha = 1;
+        if (t < 2.4) frame = requestAnimationFrame(tick);
+        else ctx.clearRect(0, 0, innerWidth, innerHeight);
+      }
+
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(tick);
+    }
+
+    /* ---------- Aşk Pusulası ---------- */
+    (function loveCompass() {
+      const stage = document.getElementById('compass-stage');
+      const dial = document.getElementById('compass-dial');
+      const needle = document.getElementById('compass-needle');
+      const calibrateBtn = document.getElementById('compass-calibrate');
+      const caption = document.getElementById('compass-caption');
+      const frontCard = document.getElementById('compass-front-card');
+      const frontKicker = document.getElementById('compass-front-kicker');
+      const frontTitle = document.getElementById('compass-front-title');
+      const frontStory = document.getElementById('compass-front-story');
+      if (!stage || !dial || !needle) return;
+
+      const PLACES = [
+        { title: 'İlk Merhaba', sub: 'Kantin', story: 'Eğitim Fakültesi kantininde başlayan bakış — her şeyin ilk adımı.' },
+        { title: 'Kahve Buharı', sub: 'Pine', story: 'Pine Cafe’de demlenen sohbet; fincanın buharı kadar yumuşak bir akşam.' },
+        { title: 'El Ele', sub: 'Dağkapı', story: 'Dağkapı’da elini tuttuğum an — rotamızın en güzel kırılması.' },
+        { title: 'İlk Yoklama', sub: 'Sınıf', story: 'Bir gün tahtanın önünde; ben de ilk sırada, her zaman yanında.' },
+        { title: 'Zaman Kapsülü', sub: '24 Kasım', story: 'Bu sayfa, bu mühür, bu gün — gelecekteki öğretmenine bir selam.' },
+        { title: 'Yarınki Ders', sub: 'Umut', story: 'Henüz yazılmamış bir ders planı; senin sesin, benim gururum.' },
+      ];
+
+      const RADIUS = 96;
+      let dialAngle = 0;
+      let heading = 0;
+      let orientLive = false;
+      let calibrating = false;
+      let dragging = false;
+      let dragStartAngle = 0;
+      let dialAtDragStart = 0;
+      let swayT = 0;
+      let activeIdx = -1;
+
+      const lines = [
+        '“Anı değişir — yön değişmez.”',
+        '“Nereye dönersen dön — pusula seni bize getirir.”',
+        '“Kuzey yok. Yönün adı: biz.”',
+        '“Öne gelen anı büyür; iğne yine aynı yüreği bulur.”',
+      ];
+      let lineIdx = 0;
+
+      const placeEls = PLACES.map((place, i) => {
+        const base = (360 / PLACES.length) * i;
+        const el = document.createElement('div');
+        el.className = 'compass-place';
+        el.dataset.base = String(base);
+        el.innerHTML =
+          '<div class="compass-place-inner">' +
+          '<span class="compass-place-dot"></span>' +
+          '<span class="compass-place-title"></span>' +
+          '<span class="compass-place-sub"></span>' +
+          '</div>';
+        el.querySelector('.compass-place-title').textContent = place.title;
+        el.querySelector('.compass-place-sub').textContent = place.sub;
+        dial.appendChild(el);
+        return el;
+      });
+
+      function norm360(a) { return ((a % 360) + 360) % 360; }
+      function shortestDiff(a, b) {
+        let d = norm360(a) - norm360(b);
+        if (d > 180) d -= 360;
+        if (d < -180) d += 360;
+        return d;
+      }
+
+      function setDial(deg) {
+        dialAngle = deg;
+        dial.style.transform = `rotate(${deg}deg)`;
+        updatePlaces();
+      }
+
+      function updatePlaces() {
+        let best = 0;
+        let bestScore = Infinity;
+
+        placeEls.forEach((el, i) => {
+          const base = Number(el.dataset.base);
+          const screen = norm360(base + dialAngle);
+          const dist = Math.abs(shortestDiff(screen, 180));
+          const t = Math.max(0, 1 - dist / 90);
+          const scale = 0.68 + t * 0.58;
+          const opacity = 0.38 + t * 0.62;
+          const inner = el.querySelector('.compass-place-inner');
+
+          el.style.transform =
+            `rotate(${base}deg) translateY(-${RADIUS}px) rotate(${-(base + dialAngle)}deg)`;
+          if (inner) {
+            inner.style.transform = `scale(${scale})`;
+            inner.style.opacity = String(opacity);
+          }
+          el.classList.toggle('is-front', dist < 30);
+          if (dist < bestScore) { bestScore = dist; best = i; }
+        });
+
+        if (best !== activeIdx) {
+          activeIdx = best;
+          const p = PLACES[best];
+          if (frontCard) {
+            frontCard.classList.add('is-swap');
+            setTimeout(() => {
+              if (frontKicker) frontKicker.textContent = 'Şu an önde';
+              if (frontTitle) frontTitle.textContent = p.title;
+              if (frontStory) frontStory.textContent = p.story;
+              frontCard.classList.remove('is-swap');
+            }, 160);
+          }
+        }
+      }
+
+      function swayLoop() {
+        if (!reduceMotion && !calibrating && !dragging) {
+          swayT += 0.03;
+          needle.style.transform = `rotate(${Math.sin(swayT) * 2.2}deg)`;
+        } else if (!calibrating) {
+          needle.style.transform = 'rotate(0deg)';
+        }
+        requestAnimationFrame(swayLoop);
+      }
+
+      function angleFromEvent(e) {
+        const rect = stage.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const point = e.touches ? e.touches[0] : e;
+        return (Math.atan2(point.clientY - cy, point.clientX - cx) * 180) / Math.PI;
+      }
+
+      function onPointerDown(e) {
+        if (calibrating) return;
+        dragging = true;
+        stage.classList.add('is-dragging');
+        dragStartAngle = angleFromEvent(e);
+        dialAtDragStart = dialAngle;
+        enableOrientation();
+        e.preventDefault();
+      }
+      function onPointerMove(e) {
+        if (!dragging) return;
+        setDial(dialAtDragStart + shortestDiff(angleFromEvent(e), dragStartAngle));
+        e.preventDefault();
+      }
+      function onPointerUp() {
+        dragging = false;
+        stage.classList.remove('is-dragging');
+      }
+
+      stage.addEventListener('mousedown', onPointerDown);
+      window.addEventListener('mousemove', onPointerMove);
+      window.addEventListener('mouseup', onPointerUp);
+      stage.addEventListener('touchstart', onPointerDown, { passive: false });
+      window.addEventListener('touchmove', onPointerMove, { passive: false });
+      window.addEventListener('touchend', onPointerUp);
+
+      function onOrient(e) {
+        if (dragging || calibrating) return;
+        let h = null;
+        if (typeof e.webkitCompassHeading === 'number' && !Number.isNaN(e.webkitCompassHeading)) h = e.webkitCompassHeading;
+        else if (typeof e.alpha === 'number' && e.alpha != null) h = (360 - e.alpha) % 360;
+        if (h == null) return;
+        orientLive = true;
+        heading = h;
+        setDial(-heading);
+      }
+
+      function enableOrientation() {
+        const attach = () => window.addEventListener('deviceorientation', onOrient, true);
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission().then((s) => { if (s === 'granted') attach(); }).catch(() => {});
+        } else attach();
+      }
+
+      function calibrate() {
+        if (calibrating) return;
+        calibrating = true;
+        enableOrientation();
+        if (caption) caption.style.opacity = '0';
+        const total = 720 + (Math.random() * 80 - 40);
+        const t0 = performance.now();
+        const startDial = dialAngle;
+        const tick = (now) => {
+          const p = Math.min(1, (now - t0) / 1500);
+          const eased = 1 - Math.pow(1 - p, 3);
+          const spin = total * eased;
+          needle.style.transform = `rotate(${spin}deg)`;
+          setDial(startDial - spin * 0.45);
+          if (p < 1) requestAnimationFrame(tick);
+          else {
+            needle.style.transform = 'rotate(0deg)';
+            setDial(orientLive ? -heading : dialAngle);
+            calibrating = false;
+            lineIdx = (lineIdx + 1) % lines.length;
+            if (caption) {
+              caption.textContent = lines[lineIdx];
+              caption.style.opacity = '1';
+            }
+            burstConfetti({ hearts: true });
+          }
+        };
+        requestAnimationFrame(tick);
+      }
+
+      calibrateBtn?.addEventListener('click', calibrate);
+      setDial(20);
+      needle.style.transform = 'rotate(0deg)';
+      requestAnimationFrame(swayLoop);
+      lucide.createIcons();
+    })();
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
