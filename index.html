@@ -1016,7 +1016,7 @@
         AMBIENT MÜZİK (Mixkit Free License):
         "Wedding Harp" — Francisco Alvear (~2:21, harp / romantik)
       -->
-      <audio id="ambient-audio" src="ambient.mp3?v=soft4" preload="auto"></audio>
+      <!-- ambient Web Audio ile yüklenir (video ile birlikte kesilmesin diye) -->
     </div>
   </div>
 
@@ -1062,7 +1062,7 @@
           <iframe
             id="story-video"
             class="absolute inset-0 h-full w-full border-0"
-            src="https://www.youtube.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1"
+            src="https://www.youtube.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=https%3A%2F%2Fkuzuofficiall.github.io"
             title="Hikâyemizin Fragmanı · Leyla &amp; Abdullah"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
@@ -1406,119 +1406,180 @@ Abdullah
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const ambientAudio = document.getElementById('ambient-audio');
     const musicToggle = document.getElementById('music-toggle');
-    // Web Audio gain — harp dosyası yüksek master’lı; telefonda çok kısık tut
-    const AMBIENT_GAIN = 0.01; // video açıkken de aynı fısıltı arkadan devam
-    // Wedding Harp — Francisco Alvear (~141s)
+    // BufferSource — HTML <audio> YouTube açılınca telefonda kesiliyor
+    const AMBIENT_GAIN = 0.01;
     const AMBIENT_START_AT = 50;
     const AMBIENT_LOOP_END = 128;
+    const AMBIENT_URL = 'ambient.mp3?v=soft5';
     let ambientMuted = false;
-    let fadeTimer = null;
     let audioCtx = null;
     let ambientGain = null;
-    let ambientWired = false;
+    let ambientBuffer = null;
+    let ambientSource = null;
+    let ambientLoading = null;
+    let ambientKeepAlive = null;
 
-    function ensureAmbientGraph() {
-      if (!ambientAudio || ambientWired) return;
-      try {
-        const Ctx = window.AudioContext || window.webkitAudioContext;
-        if (!Ctx) return;
-        audioCtx = audioCtx || new Ctx();
-        const src = audioCtx.createMediaElementSource(ambientAudio);
+    function ensureAudioCtx() {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      if (!audioCtx) {
+        audioCtx = new Ctx();
         ambientGain = audioCtx.createGain();
         ambientGain.gain.value = 0;
-        src.connect(ambientGain);
         ambientGain.connect(audioCtx.destination);
-        ambientAudio.volume = 1;
-        ambientWired = true;
-      } catch (_) {
-        ambientWired = false;
+        audioCtx.addEventListener('statechange', () => {
+          if (!ambientMuted && audioCtx.state !== 'running') {
+            audioCtx.resume().catch(() => {});
+          }
+        });
       }
-    }
-
-    function ambientLevel() {
-      if (ambientMuted) return 0;
-      return AMBIENT_GAIN;
+      return audioCtx;
     }
 
     function fadeAmbientTo(target, ms = 1800) {
-      if (!ambientAudio) return;
-      ensureAmbientGraph();
-      if (ambientGain && audioCtx) {
-        const g = ambientGain.gain;
-        const now = audioCtx.currentTime;
-        g.cancelScheduledValues(now);
-        g.setValueAtTime(g.value, now);
-        g.linearRampToValueAtTime(Math.max(0, target), now + ms / 1000);
-        return;
-      }
-      // Fallback: element.volume (masaüstü)
-      if (fadeTimer) cancelAnimationFrame(fadeTimer);
-      const start = ambientAudio.volume;
-      const t0 = performance.now();
-      const step = (t) => {
-        const p = Math.min(1, (t - t0) / ms);
-        ambientAudio.volume = start + (target - start) * (1 - Math.pow(1 - p, 3));
-        if (p < 1) fadeTimer = requestAnimationFrame(step);
-      };
-      fadeTimer = requestAnimationFrame(step);
+      if (!ambientGain || !audioCtx) return;
+      const g = ambientGain.gain;
+      const now = audioCtx.currentTime;
+      g.cancelScheduledValues(now);
+      g.setValueAtTime(g.value, now);
+      g.linearRampToValueAtTime(Math.max(0, target), now + Math.max(0.05, ms / 1000));
     }
 
-    function seekRomanticStart() {
-      if (!ambientAudio) return;
+    function stopAmbientSource() {
+      if (!ambientSource) return;
       try {
-        ambientAudio.currentTime = AMBIENT_START_AT;
+        ambientSource.onended = null;
+        ambientSource.stop();
       } catch (_) {}
+      try { ambientSource.disconnect(); } catch (_) {}
+      ambientSource = null;
+    }
+
+    function startAmbientSource() {
+      if (ambientMuted || !ambientBuffer) return;
+      const ctx = ensureAudioCtx();
+      if (!ctx || !ambientGain) return;
+      stopAmbientSource();
+      const src = ctx.createBufferSource();
+      src.buffer = ambientBuffer;
+      src.loop = true;
+      src.loopStart = Math.min(AMBIENT_START_AT, ambientBuffer.duration - 0.05);
+      src.loopEnd = Math.min(AMBIENT_LOOP_END, ambientBuffer.duration);
+      src.connect(ambientGain);
+      src.start(0, src.loopStart);
+      ambientSource = src;
+    }
+
+    function loadAmbientBuffer() {
+      if (ambientBuffer) return Promise.resolve(ambientBuffer);
+      if (ambientLoading) return ambientLoading;
+      const ctx = ensureAudioCtx();
+      if (!ctx) return Promise.reject();
+      ambientLoading = fetch(AMBIENT_URL)
+        .then((r) => r.arrayBuffer())
+        .then((buf) => ctx.decodeAudioData(buf))
+        .then((decoded) => {
+          ambientBuffer = decoded;
+          return decoded;
+        })
+        .finally(() => { ambientLoading = null; });
+      return ambientLoading;
+    }
+
+    function keepAmbientAlive() {
+      if (ambientMuted) return;
+      const ctx = ensureAudioCtx();
+      if (!ctx) return;
+      if (ctx.state !== 'running') ctx.resume().catch(() => {});
+      if (!ambientSource && ambientBuffer) {
+        startAmbientSource();
+        fadeAmbientTo(AMBIENT_GAIN, 600);
+      }
     }
 
     function tryPlayAmbient() {
-      if (!ambientAudio || ambientMuted) return;
-      ensureAmbientGraph();
-      if (audioCtx?.state === 'suspended') audioCtx.resume().catch(() => {});
-      if (ambientGain) ambientGain.gain.value = 0;
-      else ambientAudio.volume = 0;
-      const startPlay = () => {
-        seekRomanticStart();
-        ambientAudio.play()
-          .then(() => {
-            fadeAmbientTo(ambientLevel(), 2400);
-            musicToggle?.classList.add('is-visible');
-            lucide.createIcons();
-          })
-          .catch(() => {});
-      };
-      if (ambientAudio.readyState >= 1) startPlay();
-      else ambientAudio.addEventListener('loadedmetadata', startPlay, { once: true });
-    }
-
-    ambientAudio?.addEventListener('timeupdate', () => {
-      if (!ambientAudio || ambientMuted) return;
-      if (ambientAudio.currentTime >= AMBIENT_LOOP_END) {
-        ambientAudio.currentTime = AMBIENT_START_AT;
-      }
-    });
-    ambientAudio?.addEventListener('ended', () => {
       if (ambientMuted) return;
-      seekRomanticStart();
-      ambientAudio.play().catch(() => {});
-    });
+      const ctx = ensureAudioCtx();
+      if (!ctx) return;
+      ctx.resume().catch(() => {});
+      loadAmbientBuffer()
+        .then(() => {
+          startAmbientSource();
+          fadeAmbientTo(AMBIENT_GAIN, 2400);
+          musicToggle?.classList.add('is-visible');
+          lucide.createIcons();
+          if (ambientKeepAlive) clearInterval(ambientKeepAlive);
+          ambientKeepAlive = setInterval(keepAmbientAlive, 800);
+        })
+        .catch(() => {});
+    }
 
     function setAmbientMuted(muted) {
       ambientMuted = muted;
       musicToggle?.classList.toggle('is-muted', muted);
-      if (!ambientAudio) return;
       if (muted) {
-        fadeAmbientTo(0, 350);
-        setTimeout(() => ambientAudio.pause(), 380);
+        fadeAmbientTo(0, 300);
+        setTimeout(stopAmbientSource, 320);
+        if (ambientKeepAlive) {
+          clearInterval(ambientKeepAlive);
+          ambientKeepAlive = null;
+        }
       } else {
-        if (audioCtx?.state === 'suspended') audioCtx.resume().catch(() => {});
-        ambientAudio.play().then(() => fadeAmbientTo(ambientLevel(), 900)).catch(() => {});
+        tryPlayAmbient();
       }
       lucide.createIcons();
     }
 
     musicToggle?.addEventListener('click', () => setAmbientMuted(!ambientMuted));
+
+    // Video play / dokunuş: AudioContext’i uyanık tut (iOS/Android kesmesini geri al)
+    document.addEventListener('touchstart', () => {
+      if (!ambientMuted) {
+        ensureAudioCtx()?.resume().catch(() => {});
+        keepAmbientAlive();
+      }
+    }, { passive: true });
+    document.addEventListener('click', () => {
+      if (!ambientMuted) {
+        ensureAudioCtx()?.resume().catch(() => {});
+        keepAmbientAlive();
+      }
+    }, true);
+
+    (function wireStoryVideoKeepAmbient() {
+      if (!document.getElementById('story-video')) return;
+      function onVideoPlay() {
+        if (ambientMuted) return;
+        ensureAudioCtx()?.resume().catch(() => {});
+        keepAmbientAlive();
+        fadeAmbientTo(AMBIENT_GAIN, 400);
+      }
+      function attachPlayer() {
+        if (!window.YT || !YT.Player) return;
+        new YT.Player('story-video', {
+          events: {
+            onStateChange(e) {
+              if (e.data === YT.PlayerState.PLAYING) onVideoPlay();
+            },
+          },
+        });
+      }
+      if (window.YT && YT.Player) attachPlayer();
+      else {
+        const prev = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function () {
+          if (typeof prev === 'function') prev();
+          attachPlayer();
+        };
+        if (!document.getElementById('yt-iframe-api')) {
+          const s = document.createElement('script');
+          s.id = 'yt-iframe-api';
+          s.src = 'https://www.youtube.com/iframe_api';
+          document.head.appendChild(s);
+        }
+      }
+    })();
 
     const gate = document.getElementById('gate');
     const gateCard = document.getElementById('gate-card');
