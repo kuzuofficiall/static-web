@@ -1062,7 +1062,7 @@
           <iframe
             id="story-video"
             class="absolute inset-0 h-full w-full border-0"
-            src="https://www.youtube.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=https%3A%2F%2Fkuzuofficiall.github.io"
+            src="https://www.youtube.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1"
             title="Hikâyemizin Fragmanı · Leyla &amp; Abdullah"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
@@ -1491,8 +1491,9 @@ Abdullah
       if (ambientMuted) return;
       const ctx = ensureAudioCtx();
       if (!ctx) return;
-      if (ctx.state !== 'running') ctx.resume().catch(() => {});
+      // Agresif resume YouTube sesini boğmasın; sadece ambient koptuysa toparla
       if (!ambientSource && ambientBuffer) {
+        if (ctx.state !== 'running') ctx.resume().catch(() => {});
         startAmbientSource();
         fadeAmbientTo(AMBIENT_GAIN, 600);
       }
@@ -1533,53 +1534,13 @@ Abdullah
 
     musicToggle?.addEventListener('click', () => setAmbientMuted(!ambientMuted));
 
-    // Video play / dokunuş: AudioContext’i uyanık tut (iOS/Android kesmesini geri al)
+    // YouTube sesine dokunulmaz — sadece ambient kendi kendine ayakta kalsın
     document.addEventListener('touchstart', () => {
-      if (!ambientMuted) {
-        ensureAudioCtx()?.resume().catch(() => {});
-        keepAmbientAlive();
-      }
+      if (!ambientMuted) keepAmbientAlive();
     }, { passive: true });
     document.addEventListener('click', () => {
-      if (!ambientMuted) {
-        ensureAudioCtx()?.resume().catch(() => {});
-        keepAmbientAlive();
-      }
+      if (!ambientMuted) keepAmbientAlive();
     }, true);
-
-    (function wireStoryVideoKeepAmbient() {
-      if (!document.getElementById('story-video')) return;
-      function onVideoPlay() {
-        if (ambientMuted) return;
-        ensureAudioCtx()?.resume().catch(() => {});
-        keepAmbientAlive();
-        fadeAmbientTo(AMBIENT_GAIN, 400);
-      }
-      function attachPlayer() {
-        if (!window.YT || !YT.Player) return;
-        new YT.Player('story-video', {
-          events: {
-            onStateChange(e) {
-              if (e.data === YT.PlayerState.PLAYING) onVideoPlay();
-            },
-          },
-        });
-      }
-      if (window.YT && YT.Player) attachPlayer();
-      else {
-        const prev = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = function () {
-          if (typeof prev === 'function') prev();
-          attachPlayer();
-        };
-        if (!document.getElementById('yt-iframe-api')) {
-          const s = document.createElement('script');
-          s.id = 'yt-iframe-api';
-          s.src = 'https://www.youtube.com/iframe_api';
-          document.head.appendChild(s);
-        }
-      }
-    })();
 
     const gate = document.getElementById('gate');
     const gateCard = document.getElementById('gate-card');
