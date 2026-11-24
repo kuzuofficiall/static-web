@@ -1062,7 +1062,7 @@
           <iframe
             id="story-video"
             class="absolute inset-0 h-full w-full border-0"
-            src="https://www.youtube.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=https%3A%2F%2Fkuzuofficiall.github.io"
+            src="https://www.youtube.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1"
             title="Hikâyemizin Fragmanı · Leyla &amp; Abdullah"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
@@ -1409,13 +1409,11 @@ Abdullah
     const ambientAudio = document.getElementById('ambient-audio');
     const musicToggle = document.getElementById('music-toggle');
     // Web Audio gain — harp dosyası yüksek master’lı; telefonda çok kısık tut
-    const AMBIENT_GAIN = 0.01;
-    const AMBIENT_GAIN_VIDEO = 0;
+    const AMBIENT_GAIN = 0.01; // video açıkken de aynı fısıltı arkadan devam
     // Wedding Harp — Francisco Alvear (~141s)
     const AMBIENT_START_AT = 50;
     const AMBIENT_LOOP_END = 128;
     let ambientMuted = false;
-    let videoPlaying = false;
     let fadeTimer = null;
     let audioCtx = null;
     let ambientGain = null;
@@ -1440,7 +1438,7 @@ Abdullah
     }
 
     function ambientLevel() {
-      if (ambientMuted || videoPlaying) return AMBIENT_GAIN_VIDEO;
+      if (ambientMuted) return 0;
       return AMBIENT_GAIN;
     }
 
@@ -1501,7 +1499,7 @@ Abdullah
       }
     });
     ambientAudio?.addEventListener('ended', () => {
-      if (ambientMuted || videoPlaying) return;
+      if (ambientMuted) return;
       seekRomanticStart();
       ambientAudio.play().catch(() => {});
     });
@@ -1513,7 +1511,7 @@ Abdullah
       if (muted) {
         fadeAmbientTo(0, 350);
         setTimeout(() => ambientAudio.pause(), 380);
-      } else if (!videoPlaying) {
+      } else {
         if (audioCtx?.state === 'suspended') audioCtx.resume().catch(() => {});
         ambientAudio.play().then(() => fadeAmbientTo(ambientLevel(), 900)).catch(() => {});
       }
@@ -1521,60 +1519,6 @@ Abdullah
     }
 
     musicToggle?.addEventListener('click', () => setAmbientMuted(!ambientMuted));
-
-    /* YouTube: video oynarken site müziğini tamamen sustur */
-    (function wireStoryVideoDuck() {
-      if (!document.getElementById('story-video')) return;
-
-      function onVideoPlay() {
-        videoPlaying = true;
-        fadeAmbientTo(0, 280);
-        if (ambientAudio && !ambientAudio.paused) {
-          setTimeout(() => {
-            if (videoPlaying) ambientAudio.pause();
-          }, 300);
-        }
-      }
-      function onVideoIdle() {
-        videoPlaying = false;
-        if (ambientMuted || !ambientAudio) return;
-        if (audioCtx?.state === 'suspended') audioCtx.resume().catch(() => {});
-        ambientAudio.play()
-          .then(() => fadeAmbientTo(AMBIENT_GAIN, 1000))
-          .catch(() => {});
-      }
-
-      function attachPlayer() {
-        if (!window.YT || !YT.Player) return;
-        new YT.Player('story-video', {
-          events: {
-            onStateChange(e) {
-              if (e.data === YT.PlayerState.PLAYING) onVideoPlay();
-              else if (
-                e.data === YT.PlayerState.PAUSED ||
-                e.data === YT.PlayerState.ENDED ||
-                e.data === YT.PlayerState.CUED
-              ) onVideoIdle();
-            },
-          },
-        });
-      }
-
-      if (window.YT && YT.Player) attachPlayer();
-      else {
-        const prev = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = function () {
-          if (typeof prev === 'function') prev();
-          attachPlayer();
-        };
-        if (!document.getElementById('yt-iframe-api')) {
-          const s = document.createElement('script');
-          s.id = 'yt-iframe-api';
-          s.src = 'https://www.youtube.com/iframe_api';
-          document.head.appendChild(s);
-        }
-      }
-    })();
 
     const gate = document.getElementById('gate');
     const gateCard = document.getElementById('gate-card');
