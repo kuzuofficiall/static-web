@@ -1016,7 +1016,7 @@
         AMBIENT MÜZİK (Mixkit Free License):
         "Wedding Harp" — Francisco Alvear (~2:21, harp / romantik)
       -->
-      <audio id="ambient-audio" src="ambient.mp3" preload="auto"></audio>
+      <audio id="ambient-audio" src="ambient.mp3?v=soft4" preload="auto"></audio>
     </div>
   </div>
 
@@ -1062,7 +1062,7 @@
           <iframe
             id="story-video"
             class="absolute inset-0 h-full w-full border-0"
-            src="https://www.youtube-nocookie.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+            src="https://www.youtube.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=https%3A%2F%2Fkuzuofficiall.github.io"
             title="Hikâyemizin Fragmanı · Leyla &amp; Abdullah"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
@@ -1408,29 +1408,60 @@ Abdullah
 
     const ambientAudio = document.getElementById('ambient-audio');
     const musicToggle = document.getElementById('music-toggle');
-    const AMBIENT_TARGET = 0.0025; // sayfa fısıltısı
-    const AMBIENT_WHILE_VIDEO = 0.0008; // video oynarken neredeyse yok
+    // Web Audio gain — harp dosyası yüksek master’lı; telefonda çok kısık tut
+    const AMBIENT_GAIN = 0.01;
+    const AMBIENT_GAIN_VIDEO = 0;
     // Wedding Harp — Francisco Alvear (~141s)
     const AMBIENT_START_AT = 50;
     const AMBIENT_LOOP_END = 128;
     let ambientMuted = false;
     let videoPlaying = false;
     let fadeTimer = null;
+    let audioCtx = null;
+    let ambientGain = null;
+    let ambientWired = false;
+
+    function ensureAmbientGraph() {
+      if (!ambientAudio || ambientWired) return;
+      try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        audioCtx = audioCtx || new Ctx();
+        const src = audioCtx.createMediaElementSource(ambientAudio);
+        ambientGain = audioCtx.createGain();
+        ambientGain.gain.value = 0;
+        src.connect(ambientGain);
+        ambientGain.connect(audioCtx.destination);
+        ambientAudio.volume = 1;
+        ambientWired = true;
+      } catch (_) {
+        ambientWired = false;
+      }
+    }
 
     function ambientLevel() {
-      if (ambientMuted) return 0;
-      return videoPlaying ? AMBIENT_WHILE_VIDEO : AMBIENT_TARGET;
+      if (ambientMuted || videoPlaying) return AMBIENT_GAIN_VIDEO;
+      return AMBIENT_GAIN;
     }
 
     function fadeAmbientTo(target, ms = 1800) {
       if (!ambientAudio) return;
+      ensureAmbientGraph();
+      if (ambientGain && audioCtx) {
+        const g = ambientGain.gain;
+        const now = audioCtx.currentTime;
+        g.cancelScheduledValues(now);
+        g.setValueAtTime(g.value, now);
+        g.linearRampToValueAtTime(Math.max(0, target), now + ms / 1000);
+        return;
+      }
+      // Fallback: element.volume (masaüstü)
       if (fadeTimer) cancelAnimationFrame(fadeTimer);
       const start = ambientAudio.volume;
       const t0 = performance.now();
-      const step = (now) => {
-        const p = Math.min(1, (now - t0) / ms);
-        const eased = 1 - Math.pow(1 - p, 3);
-        ambientAudio.volume = start + (target - start) * eased;
+      const step = (t) => {
+        const p = Math.min(1, (t - t0) / ms);
+        ambientAudio.volume = start + (target - start) * (1 - Math.pow(1 - p, 3));
         if (p < 1) fadeTimer = requestAnimationFrame(step);
       };
       fadeTimer = requestAnimationFrame(step);
@@ -1445,12 +1476,15 @@ Abdullah
 
     function tryPlayAmbient() {
       if (!ambientAudio || ambientMuted) return;
-      ambientAudio.volume = 0.001;
+      ensureAmbientGraph();
+      if (audioCtx?.state === 'suspended') audioCtx.resume().catch(() => {});
+      if (ambientGain) ambientGain.gain.value = 0;
+      else ambientAudio.volume = 0;
       const startPlay = () => {
         seekRomanticStart();
         ambientAudio.play()
           .then(() => {
-            fadeAmbientTo(ambientLevel(), 2200);
+            fadeAmbientTo(ambientLevel(), 2400);
             musicToggle?.classList.add('is-visible');
             lucide.createIcons();
           })
@@ -1467,7 +1501,7 @@ Abdullah
       }
     });
     ambientAudio?.addEventListener('ended', () => {
-      if (ambientMuted) return;
+      if (ambientMuted || videoPlaying) return;
       seekRomanticStart();
       ambientAudio.play().catch(() => {});
     });
@@ -1477,9 +1511,10 @@ Abdullah
       musicToggle?.classList.toggle('is-muted', muted);
       if (!ambientAudio) return;
       if (muted) {
-        fadeAmbientTo(0, 400);
-        setTimeout(() => ambientAudio.pause(), 420);
-      } else {
+        fadeAmbientTo(0, 350);
+        setTimeout(() => ambientAudio.pause(), 380);
+      } else if (!videoPlaying) {
+        if (audioCtx?.state === 'suspended') audioCtx.resume().catch(() => {});
         ambientAudio.play().then(() => fadeAmbientTo(ambientLevel(), 900)).catch(() => {});
       }
       lucide.createIcons();
@@ -1487,20 +1522,26 @@ Abdullah
 
     musicToggle?.addEventListener('click', () => setAmbientMuted(!ambientMuted));
 
-    /* YouTube: video oynarken ambient’i fısıltıya çek */
+    /* YouTube: video oynarken site müziğini tamamen sustur */
     (function wireStoryVideoDuck() {
-      const iframe = document.getElementById('story-video');
-      if (!iframe) return;
+      if (!document.getElementById('story-video')) return;
 
       function onVideoPlay() {
         videoPlaying = true;
-        if (!ambientMuted) fadeAmbientTo(AMBIENT_WHILE_VIDEO, 500);
+        fadeAmbientTo(0, 280);
+        if (ambientAudio && !ambientAudio.paused) {
+          setTimeout(() => {
+            if (videoPlaying) ambientAudio.pause();
+          }, 300);
+        }
       }
       function onVideoIdle() {
         videoPlaying = false;
-        if (!ambientMuted && ambientAudio && !ambientAudio.paused) {
-          fadeAmbientTo(AMBIENT_TARGET, 900);
-        }
+        if (ambientMuted || !ambientAudio) return;
+        if (audioCtx?.state === 'suspended') audioCtx.resume().catch(() => {});
+        ambientAudio.play()
+          .then(() => fadeAmbientTo(AMBIENT_GAIN, 1000))
+          .catch(() => {});
       }
 
       function attachPlayer() {
