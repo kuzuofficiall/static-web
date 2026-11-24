@@ -1056,13 +1056,13 @@
         </div>
       </div>
 
-      <!-- Liste dışı YouTube fragmanı -->
+      <!-- Liste dışı YouTube fragmanı (yatay 16:9) -->
       <div class="cinema-frame reveal-child mt-6">
-        <div class="cinema-inner relative aspect-[9/16] max-h-[70vh] overflow-hidden sm:aspect-video sm:max-h-none">
+        <div class="cinema-inner relative aspect-video w-full overflow-hidden">
           <iframe
             id="story-video"
             class="absolute inset-0 h-full w-full border-0"
-            src="https://www.youtube-nocookie.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1"
+            src="https://www.youtube-nocookie.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
             title="Hikâyemizin Fragmanı · Leyla &amp; Abdullah"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
@@ -1408,12 +1408,19 @@ Abdullah
 
     const ambientAudio = document.getElementById('ambient-audio');
     const musicToggle = document.getElementById('music-toggle');
-    const AMBIENT_TARGET = 0.005; // çok hafif fısıltı
+    const AMBIENT_TARGET = 0.0025; // sayfa fısıltısı
+    const AMBIENT_WHILE_VIDEO = 0.0008; // video oynarken neredeyse yok
     // Wedding Harp — Francisco Alvear (~141s)
     const AMBIENT_START_AT = 50;
     const AMBIENT_LOOP_END = 128;
     let ambientMuted = false;
+    let videoPlaying = false;
     let fadeTimer = null;
+
+    function ambientLevel() {
+      if (ambientMuted) return 0;
+      return videoPlaying ? AMBIENT_WHILE_VIDEO : AMBIENT_TARGET;
+    }
 
     function fadeAmbientTo(target, ms = 1800) {
       if (!ambientAudio) return;
@@ -1438,13 +1445,12 @@ Abdullah
 
     function tryPlayAmbient() {
       if (!ambientAudio || ambientMuted) return;
-      // Sessiz başla → romantik bölüm → yumuşak fade-in
-      ambientAudio.volume = 0.01;
+      ambientAudio.volume = 0.001;
       const startPlay = () => {
         seekRomanticStart();
         ambientAudio.play()
           .then(() => {
-            fadeAmbientTo(AMBIENT_TARGET, 2200);
+            fadeAmbientTo(ambientLevel(), 2200);
             musicToggle?.classList.add('is-visible');
             lucide.createIcons();
           })
@@ -1454,7 +1460,6 @@ Abdullah
       else ambientAudio.addEventListener('loadedmetadata', startPlay, { once: true });
     }
 
-    // Romantik bölümde döngü (başa/introya düşmesin)
     ambientAudio?.addEventListener('timeupdate', () => {
       if (!ambientAudio || ambientMuted) return;
       if (ambientAudio.currentTime >= AMBIENT_LOOP_END) {
@@ -1475,12 +1480,60 @@ Abdullah
         fadeAmbientTo(0, 400);
         setTimeout(() => ambientAudio.pause(), 420);
       } else {
-        ambientAudio.play().then(() => fadeAmbientTo(AMBIENT_TARGET, 900)).catch(() => {});
+        ambientAudio.play().then(() => fadeAmbientTo(ambientLevel(), 900)).catch(() => {});
       }
       lucide.createIcons();
     }
 
     musicToggle?.addEventListener('click', () => setAmbientMuted(!ambientMuted));
+
+    /* YouTube: video oynarken ambient’i fısıltıya çek */
+    (function wireStoryVideoDuck() {
+      const iframe = document.getElementById('story-video');
+      if (!iframe) return;
+
+      function onVideoPlay() {
+        videoPlaying = true;
+        if (!ambientMuted) fadeAmbientTo(AMBIENT_WHILE_VIDEO, 500);
+      }
+      function onVideoIdle() {
+        videoPlaying = false;
+        if (!ambientMuted && ambientAudio && !ambientAudio.paused) {
+          fadeAmbientTo(AMBIENT_TARGET, 900);
+        }
+      }
+
+      function attachPlayer() {
+        if (!window.YT || !YT.Player) return;
+        new YT.Player('story-video', {
+          events: {
+            onStateChange(e) {
+              if (e.data === YT.PlayerState.PLAYING) onVideoPlay();
+              else if (
+                e.data === YT.PlayerState.PAUSED ||
+                e.data === YT.PlayerState.ENDED ||
+                e.data === YT.PlayerState.CUED
+              ) onVideoIdle();
+            },
+          },
+        });
+      }
+
+      if (window.YT && YT.Player) attachPlayer();
+      else {
+        const prev = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = function () {
+          if (typeof prev === 'function') prev();
+          attachPlayer();
+        };
+        if (!document.getElementById('yt-iframe-api')) {
+          const s = document.createElement('script');
+          s.id = 'yt-iframe-api';
+          s.src = 'https://www.youtube.com/iframe_api';
+          document.head.appendChild(s);
+        }
+      }
+    })();
 
     const gate = document.getElementById('gate');
     const gateCard = document.getElementById('gate-card');
