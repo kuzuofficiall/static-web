@@ -1056,35 +1056,19 @@
         </div>
       </div>
 
-      <!--
-        VİDEO: hikayemiz.mp4 (+ opsiyonel hikayemiz-poster.jpg) aynı klasöre
-      -->
+      <!-- Liste dışı YouTube fragmanı -->
       <div class="cinema-frame reveal-child mt-6">
-        <div class="cinema-inner relative aspect-[9/16] max-h-[70vh] sm:aspect-video sm:max-h-none">
-          <video
+        <div class="cinema-inner relative aspect-[9/16] max-h-[70vh] overflow-hidden sm:aspect-video sm:max-h-none">
+          <iframe
             id="story-video"
-            class="h-full w-full object-cover"
-            controls
-            playsinline
-            preload="metadata"
-            poster="hikayemiz-poster.jpg"
-          >
-            <source src="hikayemiz.mp4" type="video/mp4" />
-          </video>
-
-          <div id="video-placeholder" class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-chalkDeep to-chalk px-6 text-center">
-            <div class="play-pulse mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-brass/40 bg-brass/10">
-              <i data-lucide="clapperboard" class="h-7 w-7 text-brassSoft"></i>
-            </div>
-            <p class="font-display text-lg text-parchment">Hikâyemizin Fragmanı</p>
-            <p class="mt-2 max-w-[220px] text-xs leading-relaxed text-parchment/65">
-              Video eklendiğinde burada oynar. Şimdilik bu kare seni bekliyor.
-            </p>
-            <button id="try-play" type="button" class="btn-brass mt-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-xs font-semibold">
-              <i data-lucide="play" class="h-3.5 w-3.5"></i>
-              Fragmanı Oynat
-            </button>
-          </div>
+            class="absolute inset-0 h-full w-full border-0"
+            src="https://www.youtube-nocookie.com/embed/U5kUGwjAVSI?rel=0&modestbranding=1"
+            title="Hikâyemizin Fragmanı · Leyla &amp; Abdullah"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
         </div>
         <div class="mt-2 flex items-center justify-between px-1 text-[10px] uppercase tracking-[0.18em] text-brassSoft/80">
           <span>Leyla · Abdullah</span>
@@ -1510,9 +1494,6 @@ Abdullah
     const lockPanel = document.getElementById('lock-panel');
     const lockSeal = document.getElementById('lock-seal');
     const letterPanel = document.getElementById('letter-panel');
-    const storyVideo = document.getElementById('story-video');
-    const videoPlaceholder = document.getElementById('video-placeholder');
-    const tryPlayBtn = document.getElementById('try-play');
     const flashVeil = document.getElementById('flash-veil');
 
     /* Gate intro */
@@ -1614,28 +1595,6 @@ Abdullah
     }
 
     openBtn.addEventListener('click', () => openCapsule({ scroll: true, withAmbient: true, cinematic: true }));
-
-    /* Video */
-    function hidePlaceholder() { videoPlaceholder?.classList.add('hidden'); }
-    storyVideo.addEventListener('loadeddata', () => { if (storyVideo.videoWidth > 0) hidePlaceholder(); });
-    storyVideo.addEventListener('error', () => videoPlaceholder?.classList.remove('hidden'));
-    storyVideo.addEventListener('play', () => {
-      hidePlaceholder();
-      // Video varken ambient’i kıs
-      if (ambientAudio && !ambientAudio.paused) fadeAmbientTo(0.05, 500);
-    });
-    storyVideo.addEventListener('pause', () => {
-      if (ambientAudio && !ambientMuted && !ambientAudio.paused) fadeAmbientTo(AMBIENT_TARGET, 800);
-    });
-    storyVideo.addEventListener('ended', () => {
-      if (ambientAudio && !ambientMuted) {
-        ambientAudio.play().then(() => fadeAmbientTo(AMBIENT_TARGET, 1000)).catch(() => {});
-      }
-    });
-    tryPlayBtn?.addEventListener('click', async () => {
-      try { hidePlaceholder(); await storyVideo.play(); }
-      catch { storyVideo.controls = true; videoPlaceholder?.classList.remove('hidden'); }
-    });
 
     /* Yoklama */
     function markAttendance(celebrate = true) {
